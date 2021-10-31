@@ -1,0 +1,18 @@
+@mixin list-reset() {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+@mixin oswald-regular() {
+  font-family: "Oswald", "Arial", sans-serif;
+}
+
+@mixin oswald-medium() {
+  font-family: "Oswald", "Arial", sans-serif;
+}
+
+@mixin arial() {
+  font-family: "Arial", sans-serif;
+}

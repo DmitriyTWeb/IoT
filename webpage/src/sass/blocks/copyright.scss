@@ -1,0 +1,39 @@
+.copyright {
+  margin-top: -2px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+.copyright__link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  width: 120px;
+
+  font-family: $second-font, sans-serif;
+  font-size: 16px;
+  line-height: 16px;
+
+  color: $grey;
+
+  &:hover .copyright__svg,
+  &:focus .copyright__svg {
+    fill: #68b738;
+  }
+
+  &:active {
+    opacity: 0.3;
+  }
+}
+
+.copyright__img {
+  fill: #666666;
+  flex-shrink: 0;
+}
+
+@media (min-width: $tablet-width) {
+
+}

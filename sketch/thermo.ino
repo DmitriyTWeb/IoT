@@ -14,6 +14,7 @@ FtpServer ftpSrv;
 void setup() {
   setupInOut();
   setupSerial();
+  setupFtpSrv();
   setupSPIFFS();
   setupHttp();
   setupToWiFi();
@@ -102,10 +103,21 @@ String getTotalStatus() {
 }
 
 // Функция работы с файловой системой
-bool handleFileRead(String path){
+bool handleFileRead(String path) {
+  // -----
+  Serial.println("handleFileRead() path = ");
+  Serial.println(path);
+  Serial.println("\n");
+  // ----
+
   if(path.endsWith("/")) path += "index.html";
   String contentType = getContentType(path);
   if(SPIFFS.exists(path)){
+
+    // -----
+    Serial.println("handleFileRead() SPIFFS exists");
+    Serial.println("\n");
+    // ----
     File file = SPIFFS.open(path, "r");
     size_t sent = HTTP.streamFile(file, contentType);
     file.close();
@@ -114,7 +126,13 @@ bool handleFileRead(String path){
   return false;
 }
 
-String getContentType(String filename){
+String getContentType(String filename) {
+  // -----
+  Serial.println("getContentType() filename = ");
+  Serial.println(filename);
+  Serial.println("\n");
+  // ----
+
   if (filename.endsWith(".html")) return "text/html";
   else if (filename.endsWith(".css")) return "text/css";
   else if (filename.endsWith(".js")) return "application/javascript";

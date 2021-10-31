@@ -1,0 +1,85 @@
+html {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  padding: 0;
+
+  font-family: $base-font, $second-font, sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+
+  color: $almost-black;
+  background: #ffffff;
+
+  text-transform: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  text-decoration: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px;
+
+  font-family: $base-font, $second-font, sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+
+  color: $white;
+  background-color: #35a9c0;
+  text-transform: uppercase;
+
+  border: none;
+  border-radius: 5px;
+
+  &:hover,
+  &:focus {
+    background-color: #5eaa2f;
+  }
+
+  &:active {
+    color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+@media (min-width: $tablet-width) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .button {
+    padding: 10px;
+    font-size: 20px;
+    line-height: 20px;
+  }
+}

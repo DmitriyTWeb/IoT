@@ -1,0 +1,53 @@
+// devices width
+$tablet-width: 768px;
+$desktop-width: 1280px;
+$mobile-width-only: 767px;
+
+// container width
+$container-tablet-width:708px;
+$container-desktop-width: 1170px;
+
+// color variables ====================
+// recycleid variables
+$main-green: #0D9953;
+$bg-color: aliceblue;
+
+$scan-rect-size-mobile: 280px;
+$scan-rect-size-tablet: 300px;
+$scan-rect-size-desktop: 400px;
+
+$camera-rect-size-mobile: 280px;
+$camera-rect-size-tablet: 400px;
+$camera-rect-size-desktop: 500px;
+
+$preview-rect-size-mobile: $scan-rect-size-mobile;
+$preview-rect-size-tablet: $scan-rect-size-tablet;
+$preview-rect-size-desktop: $scan-rect-size-desktop;
+
+
+
+
+// end of recycleid variables
+// =======================================
+
+
+$white: #ffffff;
+$almost-black: #111111;
+$grey: #444444;
+$white-grey-bg: #f2f2f2;
+$separator-light: #e6e6e6;
+$separator-grey: #404040;
+$light-blue: #c4ccda;
+$light-green: #b3fecc;
+
+// font variables
+$base-font: "Roboto";
+$second-font: "Arial";
+
+
+
+
+
+//retina vaiables
+$retina-dpi: 144dpi;
+$retina-dppx: 1.5dppx;

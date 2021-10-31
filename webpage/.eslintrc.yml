@@ -1,0 +1,16 @@
+parserOptions:
+  sourceType: 'module'
+
+env:
+  es6: true
+  browser: true
+
+extends: ["airbnb", "airbnb/hooks", "airbnb/whitespace"]
+
+rules: {
+  "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+  "consistent-return": "off"
+}
+
+
+

@@ -1,0 +1,33 @@
+.container {
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@media (min-width: $tablet-width) {
+  .container {
+    width: 708px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .container__narrow {
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+@media (min-width: $desktop-width) {
+  .container {
+    width: 1220px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .container__narrow {
+    margin: 0 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
