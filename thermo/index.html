@@ -1,28 +1,46 @@
-<html>
+<!DOCTYPE html>
+<html lang="ru">
   <head>
-    <title>Терморегулятор</title>
+    <meta charset="utf-8">
+    <title>РўРµСЂРјРѕСЂРµРіСѓР»СЏС‚РѕСЂ</title>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <style>
-      body {
-        text-align: center;
-        height: 100%;
-        margin: 0;
-      }
-      input[type="button"] {
-        position: relative;
-        top: 50%;
-        margin-top: -30px;
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
       }
     </style>
   </head>
   <body>
-    <input type="button" value="Switch Relay (On/Off)" id="switchLED">
+    <div class="container">
+      <input type="button" value="Switch Relay (On/Off)" id="switchLED" />
+      <input type="button" value="Get Total Status" id="getTotalStatusBtn" />
+    </div>
+
     <script>
-      var relay = document.getElementById("switchLED");
+      var relayBtn = document.getElementById("switchLED");
+      var statusBtn = document.getElementById("getTotalStatusBtn");
       function switchLED() {
         fetch('/relay_switch')
           .then(response => console.log(response.body));;
       }
-      relay.addEventListener('click', switchLED);
+      function getTotalStatus() {
+        fetch('/get_total_status', {
+          method: 'GET',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+          .then(response => response.json())
+          .then(data => console.log('response data = ', data));
+      }
+      relayBtn.addEventListener('click', switchLED);
+      statusBtn.addEventListener('click', getTotalStatus);
     </script>
   </body>
 </html>

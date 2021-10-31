@@ -3,6 +3,7 @@
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <ESP8266FtpServer.h>
+#include <ArduinoJson.h>
 
 // Назначаем встроенный диод выходом
 const byte LED_PIN = LED_BUILTIN;
@@ -36,8 +37,12 @@ void setup() {
 
   // Обработка HTTP-запросов
   HTTP.on("/relay_switch", [](){                                        // При HTTP запросе вида http://192.168.4.1/relay_switch
-      HTTP.send(200, "text/plain", relay_switch());                     // Отдаём клиенту код успешной обработки запроса, сообщаем, что формат ответа текстовый и возвращаем результат выполнения функции relay_switch
+      HTTP.send(200, "text/plain", relay_switch());                     // Отдаём клиенту код успешной обработки запроса, сообщаем, что формат ответа текстовый и возвращаем результат выполнения функции
   });
+  HTTP.on("/get_total_status", []() {
+    HTTP.send(200, "application/json", getTotalStatus());
+  });
+
   HTTP.on("/relay_status", [](){                                        // При HTTP запросе вида http://192.168.4.1/relay_status
       HTTP.send(200, "text/plain", relay_status());                     // Отдаём клиенту код успешной обработки запроса, сообщаем, что формат ответа текстовый и возвращаем результат выполнения функции relay_status
   });
@@ -69,6 +74,23 @@ String relay_status() {                                                 // Фу�
   else                                                                  // иначе
     state = 0;                                                          //  запоминаем его как ноль
   return String(state);                                                 // возвращаем результат, преобразовав число в строку
+}
+
+String getTotalStatus() {
+  String status;
+
+  // Allocate a temporary JsonDocument
+  DynamicJsonDocument doc(512);
+
+  doc["energyLifetime"] = 21698620;
+  doc["energyYearly"] = 1363005;
+
+  // Serialize JSON to file
+  if (serializeJson(doc, status) == 0) {
+    Serial.println(F("Failed to write to file"));
+  }
+
+  return status;
 }
 
 bool handleFileRead(String path){                                       // Функция работы с файловой системой
