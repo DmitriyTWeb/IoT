@@ -5,14 +5,7 @@ Thumbs.db
 # Файлы редактора
 .idea
 *.sublime*
-.vscode
+.vscode/
 
 # Вспомогательные файлы
 *.log*
-node_modules/
-
-# Файлы сборки (допишите самостоятельно)
-build/
-# # Файлы сборки (допишите самостоятельно)
-# build/bundle.js
-# build/bundle.js.map
