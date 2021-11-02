@@ -6,6 +6,7 @@
   padding: 10px 0;
   border-bottom: 1px solid $separator-grey;
   background-color: $bg-color;
+  padding: 20px 0;
 }
 
 .page-header__wrapper {
@@ -17,6 +18,7 @@
 .page-header__logo {
   display: flex;
   cursor: pointer;
+  align-items: center;
 
   &:hover,
   &:focus {
@@ -30,13 +32,15 @@
 
 .page-header__logo-image {
   height: 40px;
+  width: 40px;
+}
+.page-header__logo-title {
+  display: inline-block;
+  margin-left: 20px;
+  font-size: 30px;
 }
 
 @media (min-width: $tablet-width) {
-  .page-header {
-    flex-direction: row;
-  }
-
   .page-header__wrapper {
     flex-direction: row;
     align-items: center;
@@ -48,7 +52,7 @@
   }
 
   .page-header__logo-image {
-    width: 173px;
+    width: 57px;
     height: 57px;
   }
 }
@@ -57,9 +61,5 @@
   .page-header {
     margin-top: 0;
     margin-bottom: 0;
-  }
-
-  .page-header__logo-image {
-    width: 202px;
   }
 }
