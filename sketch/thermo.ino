@@ -1,6 +1,5 @@
-#include <ESP8266WiFi.h> // либа для создания собственной точки доступа на базе ESP
-// #include "WiFi.h"
-#include <ESP8266WebServer.h>
+#include <ESP8266WiFi.h>
+#include "ESPAsyncWebServer.h"
 #include <FS.h>
 #include <ESP8266FtpServer.h>
 #include <ArduinoJson.h>
@@ -10,7 +9,7 @@
 const byte TEST_LED_PIN = LED_BUILTIN;
 uint8_t PUMP_PIN = 16;
 
-ESP8266WebServer HTTP(80);
+AsyncWebServer server(80);
 FtpServer ftpSrv;
 
 void setup() {
@@ -23,8 +22,7 @@ void setup() {
 }
 
 void loop() {
-    HTTP.handleClient();
-    ftpSrv.handleFTP();
+  ftpSrv.handleFTP();
 }
 // ==========================================================
 void setupInOut() {
@@ -43,7 +41,7 @@ void setupSerial() {
   Serial.begin(bitrate);
 }
 void setupHttp() {
-  HTTP.begin();
+  server.begin();
   setHttpRequestHandlers();
 }
 void setupFtpSrv() {
@@ -65,55 +63,70 @@ void setupToWiFi() {
 }
 
 void setHttpRequestHandlers() {
-  HTTP.on("/relay_switch", []()
-    { HTTP.send(200, "text/plain", switchLed());
+  server.on("/relay_switch", [](AsyncWebServerRequest *request) {
+    request->send(200, "text/html", switchLed());
   });
-  HTTP.on("/get_total_status", []() {
-    HTTP.send(200, "application/json", getTotalStatusHandler());
+  server.on("/get_total_status", [](AsyncWebServerRequest *request) {
+    request->send(200, "application/json", getTotalStatusHandler());
   });
-  HTTP.on("/set_total_status", setTotalStatusHandler);
-
-  HTTP.onNotFound([]() {
-    if (!handleFileRead(HTTP.uri()))
-      HTTP.send(404, "text/plain", "Not Found");
+  server.on("/", [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/index.html", "text/html");
+  });
+  server.on("/bundle.js", [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/bundle.js", "text/javascript");
+  });
+  server.on("/style.min.css", [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/style.min.css", "text/css");
+  });
+  server.on("/favicon.svg", [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/favicon.svg", "image/svg+xml");
+  });
+  server.on("/icon-logo.svg", [](AsyncWebServerRequest *request) {
+    request->send(SPIFFS, "/icon-logo.svg", "image/svg+xml");
+  });
+  server.onNotFound([](AsyncWebServerRequest *request) {
+    request->send(404, "text/plain", "Not Found");
   });
 }
-// Функция работы с файловой системой
-bool handleFileRead(String path)
-{
-  if (path.endsWith("/")) {
-    path += "index.html";
-  }
-  String contentType = getContentType(path);
-  if (SPIFFS.exists(path)) {
-    File file = SPIFFS.open(path, "r");
-    size_t sent = HTTP.streamFile(file, contentType);
-    file.close();
-    return true;
-  }
 
-  return false;
-}
+// // Функция работы с файловой системой
+// bool handleFileRead(AsyncWebServerRequest *request) {
+//   String path = request->url();
+//   Serial.println(path);
+//   if (path.endsWith("/")) {
+//     path += "index.html";
+//   }
+//   String contentType = getContentType(path);
+//   if (SPIFFS.exists(path)) {
+//     // File file = SPIFFS.open(path, "r");
+//     // size_t sent = server.streamFile(file, contentType);
+//     // file.close();
+//     request->send(SPIFFS, "/bundle.js", contentType);
+//     return true;
+//   }
 
-String getContentType(String filename)
-{
-  if (filename.endsWith(".html"))
-    return "text/html";
-  else if (filename.endsWith(".css"))
-    return "text/css";
-  else if (filename.endsWith(".js"))
-    return "application/javascript";
-  else if (filename.endsWith(".png"))
-    return "image/png";
-  else if (filename.endsWith(".jpg"))
-    return "image/jpeg";
-  else if (filename.endsWith(".gif"))
-    return "image/gif";
-  else if (filename.endsWith(".ico"))
-    return "image/x-icon";
+//   return false;
+// }
 
-  return "text/plain";
-}
+// String getContentType(String filename)
+// {
+//   if (filename.endsWith(".html"))
+//     return "text/html";
+//   else if (filename.endsWith(".css"))
+//     return "text/css";
+//   else if (filename.endsWith(".js"))
+//     return "text/javascript";
+//   else if (filename.endsWith(".png"))
+//     return "image/png";
+//   else if (filename.endsWith(".jpg"))
+//     return "image/jpeg";
+//   else if (filename.endsWith(".gif"))
+//     return "image/gif";
+//   else if (filename.endsWith(".ico"))
+//     return "image/x-icon";
+
+//   return "text/plain";
+// }
 
 // ==========================================================
 char *mode;
@@ -210,30 +223,30 @@ String getTotalStatusHandler() {
   return status;
 }
 
-void setTotalStatusHandler() {
-  if (HTTP.hasArg("plain")== false) {
-    HTTP.send(200, "text/plain", "Body not received");
-    return;
-  }
-  String requestBody = HTTP.arg("plain");
+// void setTotalStatusHandler() {
+//   if (HTTP.hasArg("plain")== false) {
+//     HTTP.send(200, "text/plain", "Body not received");
+//     return;
+//   }
+//   String requestBody = HTTP.arg("plain");
 
-  DynamicJsonDocument doc(1024);
-  deserializeJson(doc, requestBody);
-
-
-  threshOutOfBath = doc["threshOutOfBath"];
-  threshInBath = doc["threshInBath"];
-  tempDelta = doc["tempDelta"];
-
-  String message = "Body received:\n";
-  message += HTTP.arg("plain");
-  message += "\n";
-
-  // Serial.println(F("threshOutOfBath = "));
-  // Serial.println(threshOutOfBath);
-  // Serial.println("\n");
+//   DynamicJsonDocument doc(1024);
+//   deserializeJson(doc, requestBody);
 
 
-  HTTP.send(200, "text/plain", HTTP.arg("plain"));
-  Serial.println(message);
-}
+//   threshOutOfBath = doc["threshOutOfBath"];
+//   threshInBath = doc["threshInBath"];
+//   tempDelta = doc["tempDelta"];
+
+//   String message = "Body received:\n";
+//   message += HTTP.arg("plain");
+//   message += "\n";
+
+//   // Serial.println(F("threshOutOfBath = "));
+//   // Serial.println(threshOutOfBath);
+//   // Serial.println("\n");
+
+
+//   HTTP.send(200, "text/plain", HTTP.arg("plain"));
+//   Serial.println(message);
+// }
