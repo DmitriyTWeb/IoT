@@ -7,6 +7,7 @@ const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const csso = require('gulp-csso');
 const rename = require('gulp-rename');
+const imagemin = require('gulp-imagemin');
 const del = require('del');
 const webpack = require('webpack-stream');
 const path = require('path');
@@ -41,7 +42,7 @@ gulp.task("server", function () {
   });
 
   gulp.watch("src/sass/**/*.{scss,sass}", gulp.series("css"));
-  gulp.watch("src/*.html", gulp.series("copy", "refresh"));
+  gulp.watch("src/*.html", gulp.series("copyHtml", "copyImg", "refresh"));
   gulp.watch("src/components/**/*.jsx", gulp.series("webpack", "refresh"));
   gulp.watch("src/hooks/*.js", gulp.series("webpack", "refresh"));
   gulp.watch("src/*.js", gulp.series("webpack", "refresh"));
@@ -57,27 +58,34 @@ gulp.task("css", function () {
     // .pipe(plumber())
     .pipe(sourcemap.init())
     .pipe(sass())
-    .pipe(gulp.dest("build/css"))
+    .pipe(gulp.dest("build/"))
     .pipe(postcss([autoprefixer()]))
     .pipe(csso())
     .pipe(rename("style.min.css"))
     .pipe(sourcemap.write("."))
-    .pipe(gulp.dest("build/css"))
+    .pipe(gulp.dest("build/"))
     .pipe(server.stream());
 });
 
-gulp.task("copy", function () {
+gulp.task("copyHtml", function () {
   return gulp.src([
-    "src/*.html",
-    "src/img/*.{svg,png,ico}"
+    "src/*.html"
   ], {
     base: "src"
   })
     .pipe(gulp.dest("build"));
 });
+gulp.task("copyImg", function () {
+  return gulp.src([
+    "src/img/*.{svg,png,ico}"
+  ], {
+    base: "src/img"
+  })
+    .pipe(gulp.dest("build"));
+});
 
 gulp.task("images", function () {
-  return gulp.src("source/img/**/*.{png,jpg,svg}")
+  return gulp.src("src/img/**/*.{png,jpg,svg}")
     .pipe(imagemin([
       imagemin.optipng({ optimizationLevel: 3 }),
       imagemin.jpegtran({ progressive: true }),
@@ -85,14 +93,15 @@ gulp.task("images", function () {
 
     ]))
 
-    .pipe(gulp.dest("source/img"));
-
+    .pipe(gulp.dest("src/img/"));
 });
 
 gulp.task("clean", function () {
   return del("build");
 });
 
-gulp.task("buildProduction", gulp.series("clean", "copy", "css", "webpackProduction"));
-gulp.task("build", gulp.series("clean", "copy", "css", "webpack"));
+gulp.task("compressImage", gulp.series("images"));
+
+gulp.task("buildProduction", gulp.series("clean", "copyHtml", "copyImg","css", "webpackProduction"));
+gulp.task("build", gulp.series("clean", "copyHtml", "copyImg", "css", "webpack"));
 gulp.task("start", gulp.series("build", "webpack", "server"));
