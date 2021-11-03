@@ -13,6 +13,7 @@ AsyncWebServer server(80);
 FtpServer ftpSrv;
 
 void setup() {
+  setupSerial();
   setupInOut();
   setupSerial();
   setupFtpSrv();
@@ -37,15 +38,22 @@ void setupSPIFFS() {
   }
 }
 void setupSerial() {
+  // open the serial port at 115200 bps:
   const int bitrate = 115200;
   Serial.begin(bitrate);
+
+  Serial.print("Serial port is open with ");
+  Serial.print(bitrate);
+  Serial.println(" bps");
 }
 void setupHttp() {
   server.begin();
+  Serial.println("HTTP server is started");
   setHttpRequestHandlers();
 }
 void setupFtpSrv() {
   ftpSrv.begin("admin", "admin");
+  Serial.println("FTP server is started");
 }
 void setupToWiFi() {
   char *SSID = "FREEDOM";
@@ -56,8 +64,13 @@ void setupToWiFi() {
   {
     delay(1000);
     Serial.println("Connecting to WiFi..");
+    Serial.print("WiFi status code: ");
     Serial.println(WiFi.status());
   }
+  Serial.print("NodeMCU is connected to access point \"");
+  Serial.print(SSID);
+  Serial.println("\"");
+  Serial.print("WiFi localIP: ");
   Serial.println(WiFi.localIP());
   Serial.println("\n");
 }
@@ -87,9 +100,11 @@ void setHttpRequestHandlers() {
   server.onNotFound([](AsyncWebServerRequest *request) {
     request->send(404, "text/plain", "Not Found");
   });
+
+  Serial.println("HTTP request handlers are configured");
 }
 
-// // Функция работы с файловой системой
+// Функция работы с файловой системой
 // bool handleFileRead(AsyncWebServerRequest *request) {
 //   String path = request->url();
 //   Serial.println(path);
