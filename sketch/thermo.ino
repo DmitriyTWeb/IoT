@@ -15,7 +15,6 @@ FtpServer ftpSrv;
 void setup() {
   setupSerial();
   setupInOut();
-  setupSerial();
   setupFtpSrv();
   setupSPIFFS();
   setupHttp();
@@ -25,7 +24,7 @@ void setup() {
 void loop() {
   ftpSrv.handleFTP();
 }
-// ==========================================================
+// ========================================================
 void setupInOut() {
   pinMode(TEST_LED_PIN, OUTPUT);
 }
@@ -72,7 +71,6 @@ void setupToWiFi() {
   Serial.println("\"");
   Serial.print("WiFi localIP: ");
   Serial.println(WiFi.localIP());
-  Serial.println("\n");
 }
 
 void setHttpRequestHandlers() {
@@ -82,68 +80,51 @@ void setHttpRequestHandlers() {
   server.on("/get_total_status", [](AsyncWebServerRequest *request) {
     request->send(200, "application/json", getTotalStatusHandler());
   });
-  server.on("/", [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/index.html", "text/html");
-  });
-  server.on("/bundle.js", [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/bundle.js", "text/javascript");
-  });
-  server.on("/style.min.css", [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/style.min.css", "text/css");
-  });
-  server.on("/favicon.svg", [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/favicon.svg", "image/svg+xml");
-  });
-  server.on("/icon-logo.svg", [](AsyncWebServerRequest *request) {
-    request->send(SPIFFS, "/icon-logo.svg", "image/svg+xml");
-  });
   server.onNotFound([](AsyncWebServerRequest *request) {
-    request->send(404, "text/plain", "Not Found");
+    if (!handleFileRead(request)) {
+      request->send(404, "text/plain", "Not Found");
+    }
   });
-
   Serial.println("HTTP request handlers are configured");
 }
-
 // Функция работы с файловой системой
-// bool handleFileRead(AsyncWebServerRequest *request) {
-//   String path = request->url();
-//   Serial.println(path);
-//   if (path.endsWith("/")) {
-//     path += "index.html";
-//   }
-//   String contentType = getContentType(path);
-//   if (SPIFFS.exists(path)) {
-//     // File file = SPIFFS.open(path, "r");
-//     // size_t sent = server.streamFile(file, contentType);
-//     // file.close();
-//     request->send(SPIFFS, "/bundle.js", contentType);
-//     return true;
-//   }
+bool handleFileRead(AsyncWebServerRequest *request) {
+  String path = request->url();
 
-//   return false;
-// }
+  if (path.endsWith("/"))
+    path += "index.html";
 
-// String getContentType(String filename)
-// {
-//   if (filename.endsWith(".html"))
-//     return "text/html";
-//   else if (filename.endsWith(".css"))
-//     return "text/css";
-//   else if (filename.endsWith(".js"))
-//     return "text/javascript";
-//   else if (filename.endsWith(".png"))
-//     return "image/png";
-//   else if (filename.endsWith(".jpg"))
-//     return "image/jpeg";
-//   else if (filename.endsWith(".gif"))
-//     return "image/gif";
-//   else if (filename.endsWith(".ico"))
-//     return "image/x-icon";
+  if (SPIFFS.exists(path)) {
+    String contentType = getContentType(path);
+    request->send(SPIFFS, path, contentType);
+    return true;
+  }
+  return false;
+}
+String getContentType(String filename) {
+  if (filename.endsWith(".html"))
+    return "text/html";
+  else if (filename.endsWith(".css"))
+    return "text/css";
+  else if (filename.endsWith(".js"))
+    return "text/javascript";
+  else if (filename.endsWith(".png"))
+    return "image/png";
+  else if (filename.endsWith(".jpg"))
+    return "image/jpeg";
+  else if (filename.endsWith(".gif"))
+    return "image/gif";
+  else if (filename.endsWith(".ico"))
+    return "image/x-icon";
+  else if (filename.endsWith(".svg"))
+    return "image/svg+xml";
 
-//   return "text/plain";
-// }
+  return "text/plain";
+}
+// ========================================================
 
-// ==========================================================
+// --------------------------------------------------------
+// Прикладная логика проекта
 char *mode;
 float threshInBath;
 float threshOutOfBath;
