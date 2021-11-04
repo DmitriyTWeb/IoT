@@ -8,6 +8,7 @@
 // Назначаем встроенный диод выходом
 const byte TEST_LED_PIN = LED_BUILTIN;
 uint8_t PUMP_PIN = 16;
+String bufferString = "";
 
 AsyncWebServer server(80);
 FtpServer ftpSrv;
@@ -75,11 +76,39 @@ void setupToWiFi() {
 
 void setHttpRequestHandlers() {
   server.on("/relay_switch", [](AsyncWebServerRequest *request) {
-    request->send(200, "text/html", switchLed());
+    request->send(200, "text/html", switchTestLED());
   });
   server.on("/get_total_status", [](AsyncWebServerRequest *request) {
     request->send(200, "application/json", getTotalStatusHandler());
   });
+
+  server.on("/set_settings", HTTP_POST,
+    [](AsyncWebServerRequest *request) { },
+    NULL,
+    [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+      String bodyChunk = "";
+
+      for(size_t i=0; i<len; i++) {
+        Serial.print('currentIndex = ');
+        bodyChunk += (char)(*(data+i));
+      }
+
+      bufferString += bodyChunk;
+      if(index + len == total) {
+        request->send(200, "application/json", bufferString);
+        bufferString = "";
+      }
+
+      // DynamicJsonDocument doc(1024);
+      // deserializeJson(doc, requestBody);
+
+      // mode = doc["mode"];
+      // tempIn = doc["tempIn"];
+      // tempOut = doc["tempOut"];
+      // tempDelta = doc["tempDelta"];
+    }
+  );
+
   server.onNotFound([](AsyncWebServerRequest *request) {
     if (!handleFileRead(request)) {
       request->send(404, "text/plain", "Not Found");
@@ -126,8 +155,8 @@ String getContentType(String filename) {
 // --------------------------------------------------------
 // Прикладная логика проекта
 char *mode;
-float threshInBath;
-float threshOutOfBath;
+float tempIn;
+float tempOut;
 float tempDelta;
 
 void setParamsToEeprom() {
@@ -175,16 +204,16 @@ String getSensorState(float temp) {
 
 void setPumpPin(String mode, String sensorState, float temp) {
   if (mode == "Yes" && sensorState == "SENSOR_WORK") {
-    if (temp < (threshInBath - tempDelta)) {
+    if (temp < (tempIn - tempDelta)) {
       Serial.print("PumpPin = HIGH");
       digitalWrite(PUMP_PIN, HIGH);
-    } else if (temp > (threshInBath + tempDelta)) {
+    } else if (temp > (tempIn + tempDelta)) {
       digitalWrite(PUMP_PIN, LOW);
     }
   } else if (mode == "No" && sensorState == "SENSOR_WORK") {
-    if (temp < threshOutOfBath - tempDelta) {
+    if (temp < tempOut - tempDelta) {
       digitalWrite(PUMP_PIN, HIGH);
-    } else if (temp > (threshOutOfBath + tempDelta)) {
+    } else if (temp > (tempOut + tempDelta)) {
       digitalWrite(PUMP_PIN, LOW);
     }
   } else {
@@ -192,7 +221,7 @@ void setPumpPin(String mode, String sensorState, float temp) {
   }
 }
 // Функция переключения встроенного диода
-String switchLed() {
+String switchTestLED() {
   byte state;
   if (digitalRead(TEST_LED_PIN))
     state = 0;
@@ -201,15 +230,17 @@ String switchLed() {
   digitalWrite(TEST_LED_PIN, state);
   return String(state);
 }
+
 String getTotalStatusHandler() {
   String status;
   // Allocate a temporary JsonDocument
   DynamicJsonDocument doc(512);
   doc["pupmState"] = digitalRead(PUMP_PIN);
   doc["currentTemp"] = getTempCelsius();
-  doc["threshInBath"] = threshInBath;
-  doc["threshOutOfBath"] = threshOutOfBath;
+  doc["tempIn"] = tempIn;
+  doc["tempOut"] = tempOut;
   doc["tempDelta"] = tempDelta;
+  doc["mode"] = mode;
 
   // Serialize JSON to file
   if (serializeJson(doc, status) == 0) {
@@ -219,30 +250,37 @@ String getTotalStatusHandler() {
   return status;
 }
 
-// void setTotalStatusHandler() {
-//   if (HTTP.hasArg("plain")== false) {
-//     HTTP.send(200, "text/plain", "Body not received");
-//     return;
+// void setSettingsHandler (AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+//   String requestBody;
+//   if(!index) {
+//     Serial.printf("BodyStart: %u B\n", total);
 //   }
-//   String requestBody = HTTP.arg("plain");
+//   for(size_t i=0; i<len; i++) {
+//     requestBody += data[i];
+//     Serial.write(data[i]);
+//   }
+//   if(index + len == total){
+//     Serial.printf("BodyEnd: %u B\n", total);
+//   }
 
 //   DynamicJsonDocument doc(1024);
 //   deserializeJson(doc, requestBody);
 
 
-//   threshOutOfBath = doc["threshOutOfBath"];
-//   threshInBath = doc["threshInBath"];
+//   mode = doc["mode"];
+//   tempIn = doc["tempIn"];
+//   tempOut = doc["tempOut"];
 //   tempDelta = doc["tempDelta"];
 
-//   String message = "Body received:\n";
-//   message += HTTP.arg("plain");
-//   message += "\n";
+//   // String message = "Body received:\n";
+//   // message += HTTP.arg("plain");
+//   // message += "\n";
 
 //   // Serial.println(F("threshOutOfBath = "));
 //   // Serial.println(threshOutOfBath);
 //   // Serial.println("\n");
 
 
-//   HTTP.send(200, "text/plain", HTTP.arg("plain"));
-//   Serial.println(message);
+//   // .send(200, "text/plain", HTTP.arg("plain"));
+//   Serial.println(requestBody);
 // }
