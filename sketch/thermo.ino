@@ -5,10 +5,23 @@
 #include <ArduinoJson.h>
 #include "EEPROM.h"
 
-// Назначаем встроенный диод выходом
+// --------------------------------------------------------
+// Глобальные константы и переменные
 const byte TEST_LED_PIN = LED_BUILTIN;
 uint8_t PUMP_PIN = 16;
+
+String mode;
+float tempIn;
+float tempOut;
+float tempDelta;
+
+byte MODE_ADDR = 0;
+byte TEMP_IN_ADDR = 4;
+byte TEMP_OUT_ADDR = 8;
+byte TEMP_DELTA_ADDR = 12;
+
 String bufferString = "";
+// --------------------------------------------------------
 
 AsyncWebServer server(80);
 FtpServer ftpSrv;
@@ -20,6 +33,9 @@ void setup() {
   setupSPIFFS();
   setupHttp();
   setupToWiFi();
+
+  setupEEPROM();
+  loadSettings();
 }
 
 void loop() {
@@ -28,6 +44,7 @@ void loop() {
 // ========================================================
 void setupInOut() {
   pinMode(TEST_LED_PIN, OUTPUT);
+  Serial.println("Inputs and Outputs are configured");
 }
 void setupSPIFFS() {
   SPIFFS.begin();
@@ -36,9 +53,9 @@ void setupSPIFFS() {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
+  Serial.println("SPIFFS is started");
 }
 void setupSerial() {
-  // open the serial port at 115200 bps:
   const int bitrate = 115200;
   Serial.begin(bitrate);
 
@@ -50,6 +67,7 @@ void setupHttp() {
   server.begin();
   Serial.println("HTTP server is started");
   setHttpRequestHandlers();
+  Serial.println("HTTP request handlers are configured");
 }
 void setupFtpSrv() {
   ftpSrv.begin("admin", "admin");
@@ -73,40 +91,29 @@ void setupToWiFi() {
   Serial.print("WiFi localIP: ");
   Serial.println(WiFi.localIP());
 }
+void setupEEPROM() {
+  EEPROM.begin(512);
+}
+void loadSettings() {
+  // При запуске системы читаем ранее сохраненные настройки
+  readSettingsFromEeprom();
+}
 
 void setHttpRequestHandlers() {
-  server.on("/relay_switch", [](AsyncWebServerRequest *request) {
-    request->send(200, "text/html", switchTestLED());
+  server.on("/toggle_test_led", [](AsyncWebServerRequest *request) {
+    request->send(200, "text/plain", (String)toggleTestLED());
   });
-  server.on("/get_total_status", [](AsyncWebServerRequest *request) {
-    request->send(200, "application/json", getTotalStatusHandler());
+  server.on("/get_device_state", [](AsyncWebServerRequest *request) {
+    request->send(200, "application/json", getDeviceState());
+  });
+  server.on("/get_device_settings", [](AsyncWebServerRequest *request) {
+    request->send(200, "application/json", getDeviceSettings());
   });
 
-  server.on("/set_settings", HTTP_POST,
+  server.on("/set_device_settings", HTTP_POST,
     [](AsyncWebServerRequest *request) { },
     NULL,
-    [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-      String bodyChunk = "";
-
-      for(size_t i=0; i<len; i++) {
-        Serial.print('currentIndex = ');
-        bodyChunk += (char)(*(data+i));
-      }
-
-      bufferString += bodyChunk;
-      if(index + len == total) {
-        request->send(200, "application/json", bufferString);
-        bufferString = "";
-      }
-
-      // DynamicJsonDocument doc(1024);
-      // deserializeJson(doc, requestBody);
-
-      // mode = doc["mode"];
-      // tempIn = doc["tempIn"];
-      // tempOut = doc["tempOut"];
-      // tempDelta = doc["tempDelta"];
-    }
+    setDeviceSettingsHandler
   );
 
   server.onNotFound([](AsyncWebServerRequest *request) {
@@ -114,9 +121,8 @@ void setHttpRequestHandlers() {
       request->send(404, "text/plain", "Not Found");
     }
   });
-  Serial.println("HTTP request handlers are configured");
 }
-// Функция работы с файловой системой
+
 bool handleFileRead(AsyncWebServerRequest *request) {
   String path = request->url();
 
@@ -150,22 +156,64 @@ String getContentType(String filename) {
 
   return "text/plain";
 }
-// ========================================================
 
-// --------------------------------------------------------
-// Прикладная логика проекта
-char *mode;
-float tempIn;
-float tempOut;
-float tempDelta;
+String getDeviceState() {
+  String state;
+  DynamicJsonDocument doc(256);
+  doc["pupmState"] = digitalRead(PUMP_PIN);
+  doc["currentTemp"] = getTempCelsius();
 
-void setParamsToEeprom() {
-  // EEPROM.put(0, inputMessage_0);
-  // EEPROM.put(4, inputMessage_1);
-  // EEPROM.put(8, inputMessage_2);
-  // EEPROM.put(12, inputMessage_3);
-  // EEPROM.commit();
-};
+  if (serializeJson(doc, state) == 0) {
+    Serial.println(F("Failed to serialize device state"));
+  }
+
+  return state;
+}
+String getDeviceSettings() {
+  String settings;
+  DynamicJsonDocument doc(256);
+
+  doc["tempIn"] = tempIn;
+  doc["tempOut"] = tempOut;
+  doc["tempDelta"] = tempDelta;
+  doc["mode"] = mode;
+
+  if (serializeJson(doc, settings) == 0) {
+    Serial.println(F("Failed to serialize settings"));
+  }
+
+  return settings;
+}
+
+void setDeviceSettingsHandler(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+  String bodyChunk = "";
+
+  for(size_t i=0; i<len; i++) {
+    bodyChunk += (char)(*(data+i));
+  }
+
+  bufferString += bodyChunk;
+  if(index + len == total) {
+    DynamicJsonDocument responseJson(128);
+    String responseMessage;
+
+    bool isSavingSucces = saveSettings(bufferString);
+    if(isSavingSucces) {
+      responseJson["succes"] = "true";
+      responseJson["error"] = "";
+
+      serializeJson(responseJson, responseMessage);
+      request->send(200, "application/json", responseMessage);
+    } else {
+      responseJson["succes"] = "false";
+      responseJson["error"] = "Save settings attemp failed";
+
+      serializeJson(responseJson, responseMessage);
+      request->send(200, "application/json", responseMessage);
+    }
+    bufferString = "";
+  }
+}
 
 float getTempCelsius() {
   // Переменные для преобразования сопротивления в температуру
@@ -192,13 +240,10 @@ float getTempCelsius() {
 }
 String getSensorState(float temp) {
   String state;
-
   if (temp < -55 || temp > 125) {
     state = "SENSOR_BROKEN";
-    // OM_0 = "red";
   } else {
     state = "SENSOR_WORK";
-    // OM_0 = "blue";
   }
 }
 
@@ -220,8 +265,10 @@ void setPumpPin(String mode, String sensorState, float temp) {
     digitalWrite(PUMP_PIN, LOW);
   }
 }
+
 // Функция переключения встроенного диода
-String switchTestLED() {
+// Для первичного тестирования связи с платой
+String toggleTestLED() {
   byte state;
   if (digitalRead(TEST_LED_PIN))
     state = 0;
@@ -231,56 +278,35 @@ String switchTestLED() {
   return String(state);
 }
 
-String getTotalStatusHandler() {
-  String status;
-  // Allocate a temporary JsonDocument
-  DynamicJsonDocument doc(512);
-  doc["pupmState"] = digitalRead(PUMP_PIN);
-  doc["currentTemp"] = getTempCelsius();
-  doc["tempIn"] = tempIn;
-  doc["tempOut"] = tempOut;
-  doc["tempDelta"] = tempDelta;
-  doc["mode"] = mode;
-
-  // Serialize JSON to file
-  if (serializeJson(doc, status) == 0) {
-    Serial.println(F("Failed to write to file"));
-  }
-
-  return status;
+void readSettingsFromEeprom() {
+  EEPROM.get(MODE_ADDR, mode);
+  EEPROM.get(TEMP_IN_ADDR, tempIn);
+  EEPROM.get(TEMP_OUT_ADDR, tempOut);
+  EEPROM.get(TEMP_DELTA_ADDR, tempDelta);
 }
 
-// void setSettingsHandler (AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-//   String requestBody;
-//   if(!index) {
-//     Serial.printf("BodyStart: %u B\n", total);
-//   }
-//   for(size_t i=0; i<len; i++) {
-//     requestBody += data[i];
-//     Serial.write(data[i]);
-//   }
-//   if(index + len == total){
-//     Serial.printf("BodyEnd: %u B\n", total);
-//   }
+bool saveSettings(String jsonString) {
+  DynamicJsonDocument doc(1024);
+  deserializeJson(doc, jsonString);
 
-//   DynamicJsonDocument doc(1024);
-//   deserializeJson(doc, requestBody);
+  mode = doc["mode"].as<const char*>();
+  tempIn = doc["tempIn"].as<float>();
+  tempOut = doc["tempOut"].as<float>();
+  tempDelta = doc["tempDelta"].as<float>();
 
+  if (mode && tempIn && tempOut && tempDelta) {
+    writeSettingsToEeprom();
+    return true;
+  }
 
-//   mode = doc["mode"];
-//   tempIn = doc["tempIn"];
-//   tempOut = doc["tempOut"];
-//   tempDelta = doc["tempDelta"];
+  return false;
+}
+void writeSettingsToEeprom() {
+  EEPROM.put(MODE_ADDR, mode);
+  EEPROM.put(TEMP_IN_ADDR, tempIn);
+  EEPROM.put(TEMP_OUT_ADDR, tempOut);
+  EEPROM.put(TEMP_DELTA_ADDR, tempDelta);
+  EEPROM.commit();
 
-//   // String message = "Body received:\n";
-//   // message += HTTP.arg("plain");
-//   // message += "\n";
-
-//   // Serial.println(F("threshOutOfBath = "));
-//   // Serial.println(threshOutOfBath);
-//   // Serial.println("\n");
-
-
-//   // .send(200, "text/plain", HTTP.arg("plain"));
-//   Serial.println(requestBody);
-// }
+  Serial.println("Settings were written to EEPROM");
+};
