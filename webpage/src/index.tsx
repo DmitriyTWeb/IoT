@@ -9,10 +9,7 @@ import reducer from './store/reducer';
 
 import App from './components/app/app';
 
-
-
 const api = createAPI();
-
 const store = createStore(
   reducer,
   composeWithDevTools(

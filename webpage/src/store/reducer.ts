@@ -2,9 +2,9 @@ import { Reducer } from 'redux';
 import { ActionType } from './action';
 
 const initialState = {
-  floorTemp: -99,
-  pumpState: 'OFF',
-  sensorStatus: "WORK",
+  floorTemp: '--',
+  pumpState: '--',
+  sensorStatus: "--",
   error: '',
 };
 
@@ -16,15 +16,9 @@ const extend = (a: Object, b: Object) => ({
 const reducer: Reducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionType.SET_SETTINGS:
-      return extend(state, {
-        ...action.payload,
-      });
-    case ActionType.CHANGE_STORE_STATE:
-      return extend(state, {
-        floorTemp: state.floorTemp + 1,
-        pumpState: 'ON',
-        sensorStatus: "SENSOR_BROKEN"
-      });
+      return extend(state, action.payload);
+    case ActionType.UPDATE_DEVICE_STATE:
+      return extend(state, action.payload);
     default:
       return state;
   }

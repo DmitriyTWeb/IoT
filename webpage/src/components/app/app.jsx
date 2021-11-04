@@ -5,7 +5,7 @@ import PageHeader from '../page-header/page-header';
 import PageMain from '../page-main/page-main';
 import PageFooter from '../page-footer/page-footer';
 
-const App = () => (
+const App = (props) => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/">

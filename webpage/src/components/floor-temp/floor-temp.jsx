@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 
 const FloorTemp = (props) => {
   return(
@@ -8,9 +7,5 @@ const FloorTemp = (props) => {
 };
 
 
-const mapStateToProps = (state) => ({
-  floorTemp: state.floorTemp,
-});
 
-export { FloorTemp };
-export default connect(mapStateToProps, null)(FloorTemp);
+export default FloorTemp;

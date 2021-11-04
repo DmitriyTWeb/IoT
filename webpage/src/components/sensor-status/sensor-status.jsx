@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 
 const SensorStatus = ({sensorStatus}) => {
   console.log(sensorStatus);
@@ -8,9 +7,4 @@ const SensorStatus = ({sensorStatus}) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  sensorStatus: state.sensorStatus,
-});
-
-export { SensorStatus };
-export default connect(mapStateToProps, null)(SensorStatus);
+export default SensorStatus;
