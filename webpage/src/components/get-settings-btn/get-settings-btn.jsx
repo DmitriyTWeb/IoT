@@ -1,8 +1,8 @@
 import React from "react";
 
-const GetStatusBtn = (props) => {
+const GetSettingsBtn = (props) => {
   const clickHandler = () => {
-    fetch('/get_total_status', {
+    fetch('/get_device_settings', {
       method: 'GET',
       mode: 'no-cors',
       headers: {
@@ -13,9 +13,9 @@ const GetStatusBtn = (props) => {
       .then(data => console.log('response data = ', data));
   };
 
-  return(
+  return (
     <input type="button" value={props.label} onClick={clickHandler} />
   );
 };
 
-export default GetStatusBtn;
+export default GetSettingsBtn;

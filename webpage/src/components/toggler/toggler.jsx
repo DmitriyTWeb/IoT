@@ -2,7 +2,7 @@ import React from "react";
 
 const Toggler = (props) => {
   const clickHandler = () => {
-    fetch('/relay_switch')
+    fetch('/toggle_test_led')
       .then(response => console.log(response.body));;
   };
 

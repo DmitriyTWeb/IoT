@@ -1,26 +1,21 @@
 import React from "react";
 
-const SetStatusBtn = (props) => {
+const GetStateBtn = (props) => {
   const clickHandler = () => {
-    fetch('/set_total_status', {
-      method: 'POST',
+    fetch('/get_device_state', {
+      method: 'GET',
       mode: 'no-cors',
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "threshInBath": "99",
-        "threshOutOfBath": "10",
-        "tempDelta": "3"
-      })
+      }
     })
       .then(response => response.json())
       .then(data => console.log('response data = ', data));
   };
 
-  return (
+  return(
     <input type="button" value={props.label} onClick={clickHandler} />
   );
 };
 
-export default SetStatusBtn;
+export default GetStateBtn;

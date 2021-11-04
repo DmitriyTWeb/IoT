@@ -34,7 +34,7 @@ const SettingsForm = (props) => {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    fetch('/set_settings', {
+    fetch('/set_device_settings', {
       method: 'POST',
       mode: 'no-cors',
       headers: {
