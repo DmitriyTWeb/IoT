@@ -9,7 +9,7 @@ const StateBoard = (props) => {
     <>
       <FloorTemp />
       <SensorStatus />
-      <input type="button" onClick={props.changeStore} value="change store state"/>
+      {/* <input type="button" onClick={props.changeStore} value="change store state"/> */}
     </>
   );
 };
