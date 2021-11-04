@@ -15,6 +15,10 @@ float tempIn;
 float tempOut;
 float tempDelta;
 
+float currentTemp;
+String sensorStatus;
+bool pumpState;
+
 byte MODE_ADDR = 0;
 byte TEMP_IN_ADDR = 4;
 byte TEMP_OUT_ADDR = 8;
@@ -40,6 +44,7 @@ void setup() {
 
 void loop() {
   ftpSrv.handleFTP();
+  // controlMainLogic();
 }
 // ========================================================
 void setupInOut() {
@@ -160,8 +165,10 @@ String getContentType(String filename) {
 String getDeviceState() {
   String state;
   DynamicJsonDocument doc(256);
-  doc["pupmState"] = digitalRead(PUMP_PIN);
-  doc["currentTemp"] = getTempCelsius();
+  float currentTemp = getTempCelsius();
+  doc["pumpState"] = digitalRead(PUMP_PIN);
+  doc["currentTemp"] = currentTemp;
+  doc["sensorStatus"] = getSensorStatus(currentTemp);
 
   if (serializeJson(doc, state) == 0) {
     Serial.println(F("Failed to serialize device state"));
@@ -238,24 +245,34 @@ float getTempCelsius() {
 
   return tempCelsuis;
 }
-String getSensorState(float temp) {
+String getSensorStatus(float temp) {
   String state;
   if (temp < -55 || temp > 125) {
     state = "SENSOR_BROKEN";
   } else {
     state = "SENSOR_WORK";
   }
+
+  return state;
 }
 
-void setPumpPin(String mode, String sensorState, float temp) {
-  if (mode == "Yes" && sensorState == "SENSOR_WORK") {
+void controlMainLogic() {
+  updateDeviceState();
+  setPumpPin(mode, sensorStatus, currentTemp);
+}
+void updateDeviceState() {
+  currentTemp = getTempCelsius();
+  sensorStatus = getSensorStatus(currentTemp);
+  pumpState = digitalRead(PUMP_PIN);
+}
+void setPumpPin(String mode, String sensorStatus, float temp) {
+  if (mode == "IN" && sensorStatus == "SENSOR_WORK") {
     if (temp < (tempIn - tempDelta)) {
-      Serial.print("PumpPin = HIGH");
       digitalWrite(PUMP_PIN, HIGH);
     } else if (temp > (tempIn + tempDelta)) {
       digitalWrite(PUMP_PIN, LOW);
     }
-  } else if (mode == "No" && sensorState == "SENSOR_WORK") {
+  } else if (mode == "OUT" && sensorStatus == "SENSOR_WORK") {
     if (temp < tempOut - tempDelta) {
       digitalWrite(PUMP_PIN, HIGH);
     } else if (temp > (tempOut + tempDelta)) {
