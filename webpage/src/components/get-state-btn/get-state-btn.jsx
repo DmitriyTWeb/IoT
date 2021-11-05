@@ -3,20 +3,6 @@ import { connect } from "react-redux";
 import { updateDeviceState } from "../../store/action";
 
 const GetStateBtn = (props) => {
-  // const clickHandler = () => {
-  //   fetch('/get_device_state', {
-  //     method: 'GET',
-  //     mode: 'no-cors',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     }
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       dispatch(updateDeviceState(data));
-  //       console.log('response data = ', data)
-  //     });
-  // };
   return(
     <input type="button" value={props.label} onClick={props.clickHandler} />
   );

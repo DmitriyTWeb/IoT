@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux"
 import FloorTemp from "../floor-temp/floor-temp";
 import SensorStatus from "../sensor-status/sensor-status";
@@ -6,11 +6,12 @@ import PumpState from "../pump-state/pump-state";
 import { updateDeviceState } from "../../store/action";
 
 const StateBoard = (props) => {
-  props.fetchDeviceState();
-  // setInterval(() => {
-  //   props.fetchDeviceState();
-  //   console.log('set interval');
-  // }, 3000);
+  useEffect(() => {
+    setInterval(() => {
+      props.fetchDeviceState();
+    }, 2000);
+
+  }, []);
 
   return(
     <>
