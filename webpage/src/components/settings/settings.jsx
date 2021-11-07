@@ -11,8 +11,6 @@ const TempInit = {
 }
 
 const Settings = (props) => {
-  // const [settings, setSettings] = useState({});
-
   const [mode, setMode] = useState(Mode.OUT);
   const [tempIn, setTempIn] = useState(TempInit.IN);
   const [tempOut, setTempOut] = useState(TempInit.OUT);
@@ -57,7 +55,7 @@ const Settings = (props) => {
       <h1 className="settings__title">Настройки системы</h1>
       <section className="settings__floor">
         <h1 className="settings__floor-title">Установки теплых полов в бане</h1>
-        <p className="settings__row-title">Режим</p>
+        <p className="settings__row-title">Активный режим</p>
         <input className="settings__mode-switch" type="radio" name="mode" id="mode_in" value={Mode.IN} onChange={modeChangeHandler} checked={mode === Mode.IN} />
         <label className="settings__mode-label" htmlFor="mode_in">хозяин в бане</label>
 

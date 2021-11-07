@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { ActionType } from './action';
 
 const initialState = {
-  floorTemp: '--',
+  currentTemp: '--',
   pumpState: '--',
   sensorStatus: "--",
   error: '',

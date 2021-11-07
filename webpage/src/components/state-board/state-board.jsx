@@ -6,19 +6,20 @@ import PumpState from "../pump-state/pump-state";
 import { updateDeviceState } from "../../store/action";
 
 const StateBoard = (props) => {
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     props.fetchDeviceState();
-  //   }, 2000);
+  useEffect(() => {
+    setInterval(() => {
+      props.fetchDeviceState();
+    }, 2000);
 
-  // }, []);
+  }, []);
 
   return(
-    <>
+    <section className="state">
+      <h1 className="state-title">Состояние системы</h1>
       <FloorTemp floorTemp={props.currentTemp} />
       <SensorStatus sensorStatus={props.sensorStatus} />
       <PumpState pumpState={props.pumpState}/>
-    </>
+    </section>
   );
 };
 

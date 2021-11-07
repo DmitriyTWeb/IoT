@@ -1,8 +1,11 @@
 import React from "react";
 
-const PumpState = (props) => {
+const PumpState = ({pumpState}) => {
   return(
-    <p>Статус включения насоса: {props.pumpState}</p>
+    <>
+      <p className="pump-stat__title">Статус включения насоса</p>
+      <p className="pump-stat__value">{pumpState}</p>
+    </>
   );
 };
 
