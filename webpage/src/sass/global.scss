@@ -55,8 +55,8 @@ a {
   line-height: 18px;
   font-weight: 400;
 
-  color: $white;
-  background-color: #35a9c0;
+  color: $button-color;
+  background-color: $button-bg;
   text-transform: uppercase;
 
   border: none;
@@ -64,11 +64,11 @@ a {
 
   &:hover,
   &:focus {
-    background-color: #5eaa2f;
+    background-color: $button-hover;
   }
 
   &:active {
-    color: rgba(255, 255, 255, 0.3);
+    background-color: #6a9ec9;
   }
 }
 
@@ -79,7 +79,7 @@ a {
 
   .button {
     padding: 10px;
-    font-size: 20px;
-    line-height: 20px;
+    font-size: 15px;
+    line-height: 15px;
   }
 }

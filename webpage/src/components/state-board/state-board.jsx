@@ -6,12 +6,12 @@ import PumpState from "../pump-state/pump-state";
 import { updateDeviceState } from "../../store/action";
 
 const StateBoard = (props) => {
-  useEffect(() => {
-    setInterval(() => {
-      props.fetchDeviceState();
-    }, 2000);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     props.fetchDeviceState();
+  //   }, 2000);
 
-  }, []);
+  // }, []);
 
   return(
     <>

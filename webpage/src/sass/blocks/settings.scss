@@ -1,0 +1,107 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid $grey;
+  border-radius: 5px;
+}
+.settings__title {
+  position: absolute;
+  background-color: $white;
+  top: -20px;
+  left: 10px;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 0 5px;
+  color: $partition-title;
+}
+.settings__floor {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px dashed $grey;
+  border-radius: 5px;
+  padding: 15px;
+}
+.settings__floor-title {
+  position: absolute;
+  background-color: $white;
+  top: -20px;
+  left: 10px;
+  font-size: 14px;
+  line-height: 14px;
+  padding: 0 5px;
+  color: grey;
+}
+
+.settings__row-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  padding: 5px 0;
+}
+
+.settings__mode-switch {
+  position: absolute;
+  clip: rect(0 0 0 0);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+}
+.settings__mode-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-transform: uppercase;
+  border: 2px solid grey;
+  padding: 2px 5px;
+  width: 100%;
+
+  &--in {
+    border-right-width: 1px;
+  }
+  &--out {
+    border-left-width: 1px;
+  }
+}
+.settings__mode-switch:checked + .settings__mode-label {
+  background-color: $bg-color-dark;
+}
+
+.settings__temp {
+  text-align: center;
+  border: 2px solid grey;
+  border-top-width: 1px;
+
+  &--out {
+    border-left-width: 1px;
+  }
+}
+
+.settings__temp-delta {
+  grid-column: 2 / 4;
+  text-align: center;
+  border: 2px solid grey;
+  border-top: none;
+}
+.settings__submit {
+  margin-left: auto;
+}
+
+@media (min-width: $desktop-width) {
+  .settings {
+    margin-top: 40px;
+    padding: 20px;
+  }
+
+  .settings__floor {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+}

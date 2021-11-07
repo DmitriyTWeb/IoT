@@ -1,7 +1,7 @@
 import React from 'react';
 
 import StateBoard from '../state-board/state-board';
-import SettingsForm from '../settings-form/settings-form';
+import Settings from '../settings/settings';
 
 import Toggler from '../toggler/toggler';
 import GetStateBtn from "../get-state-btn/get-state-btn";
@@ -13,12 +13,13 @@ const testPanelStyle = {
   flexDirection: 'column',
   width: '200px',
   marginTop: '30px',
+  marginBottom: '30px',
 };
 
 const PageMain = () => (
   <main className="page-main container">
     <StateBoard />
-    <SettingsForm />
+    <Settings />
 
     {/* удалить контейнер вместе с содержимым позже */}
     <div style={testPanelStyle}>
