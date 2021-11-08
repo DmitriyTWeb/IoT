@@ -25,6 +25,9 @@ byte TEMP_OUT_ADDR = 8;
 byte TEMP_DELTA_ADDR = 12;
 
 String bufferString = "";
+unsigned long startMillis;
+unsigned long currentMillis;
+const unsigned long PERIOD = 500;
 // --------------------------------------------------------
 
 AsyncWebServer server(80);
@@ -40,15 +43,23 @@ void setup() {
 
   setupEEPROM();
   loadSettings();
+
+  startMillis = millis();
 }
 
 void loop() {
   ftpSrv.handleFTP();
-  // controlMainLogic();
+  currentMillis = millis();
+  if (currentMillis - startMillis >= PERIOD) {
+    controlMainLogic();
+    startMillis = currentMillis;
+  }
+
 }
 // ========================================================
 void setupInOut() {
   pinMode(TEST_LED_PIN, OUTPUT);
+  pinMode(PUMP_PIN, OUTPUT);
   Serial.println("Inputs and Outputs are configured");
 }
 void setupSPIFFS() {
@@ -128,6 +139,17 @@ void setHttpRequestHandlers() {
   });
 }
 
+// Функция переключения встроенного диода
+// Для первичного тестирования связи с платой
+String toggleTestLED() {
+  byte state;
+  if (digitalRead(TEST_LED_PIN))
+    state = 0;
+  else
+    state = 1;
+  digitalWrite(TEST_LED_PIN, state);
+  return String(state);
+}
 bool handleFileRead(AsyncWebServerRequest *request) {
   String path = request->url();
 
@@ -161,7 +183,6 @@ String getContentType(String filename) {
 
   return "text/plain";
 }
-
 String getDeviceState() {
   String state;
   DynamicJsonDocument doc(256);
@@ -266,33 +287,31 @@ void updateDeviceState() {
   pumpState = digitalRead(PUMP_PIN);
 }
 void setPumpPin(String mode, String sensorStatus, float temp) {
-  if (mode == "IN" && sensorStatus == "SENSOR_WORK") {
-    if (temp < (tempIn - tempDelta)) {
-      digitalWrite(PUMP_PIN, HIGH);
-    } else if (temp > (tempIn + tempDelta)) {
-      digitalWrite(PUMP_PIN, LOW);
-    }
-  } else if (mode == "OUT" && sensorStatus == "SENSOR_WORK") {
-    if (temp < tempOut - tempDelta) {
-      digitalWrite(PUMP_PIN, HIGH);
-    } else if (temp > (tempOut + tempDelta)) {
-      digitalWrite(PUMP_PIN, LOW);
+  if (sensorStatus == "SENSOR_WORK") {
+    if (mode == "IN") {
+      if (temp < (tempIn - tempDelta)) {
+        setDigitalPin(PUMP_PIN, HIGH);
+      } else if (temp >= (tempIn + tempDelta)) {
+        setDigitalPin(PUMP_PIN, LOW);
+      }
+    } else {
+      Serial.println("mode = OUT");
+      if (temp < (tempOut - tempDelta)) {
+        setDigitalPin(PUMP_PIN, HIGH);
+      } else if (temp >= (tempOut + tempDelta)) {
+        setDigitalPin(PUMP_PIN, LOW);
+      }
     }
   } else {
     digitalWrite(PUMP_PIN, LOW);
   }
 }
 
-// Функция переключения встроенного диода
-// Для первичного тестирования связи с платой
-String toggleTestLED() {
-  byte state;
-  if (digitalRead(TEST_LED_PIN))
-    state = 0;
-  else
-    state = 1;
-  digitalWrite(TEST_LED_PIN, state);
-  return String(state);
+void setDigitalPin(uint8_t pin, uint8_t newState) {
+  int currentState =  digitalRead(pin);
+  if (currentState != newState) {
+    digitalWrite(pin, newState);
+  }
 }
 
 void readSettingsFromEeprom() {
