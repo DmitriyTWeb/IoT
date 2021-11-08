@@ -8,6 +8,11 @@
   border-radius: 5px;
   padding: 15px;
 }
+
+.state p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 .state-title {
   position: absolute;
   background-color: $white;
@@ -19,8 +24,13 @@
   color: $partition-title;
 }
 
-@media (min-width: $desktop-width) {
+@media (min-width: $tablet-width) {
   .state {
-    margin-top: 40px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  .state p {
+    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }

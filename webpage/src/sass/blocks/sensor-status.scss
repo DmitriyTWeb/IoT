@@ -1,0 +1,15 @@
+.sensor-status__title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.sensor-status__value {
+  background-color: rgb(187, 187, 187);
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 5px;
+
+  &--broken {
+    background-color: #ff000069;
+  }
+}
