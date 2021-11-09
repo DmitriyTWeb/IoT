@@ -61,11 +61,14 @@ const Settings = ({ setSettings, mode = Mode.IN, tempIn = TempInit.IN, tempOut =
         <label className="settings__mode-label settings__mode-label--out" htmlFor="mode_out">никого нет</label>
 
         <p className="settings__row-title">Cредняя температура</p>
-        <input className="settings__temp settings__temp--in" type="number" step="0.1" min="0" max="60" onChange={tempInChangeHandler} value={tempInLocal} required />
-        <input className="settings__temp settings__temp--out" type="number" step="0.1" name="threshold_input2" min="0" max="60" onChange={tempOutChangeHandler} value={tempOutLocal} required />
+        <input className="settings__temp settings__temp--in" type="number" step="0.1" min="0" max="60" onChange={tempInChangeHandler}
+          value={Number.parseFloat(tempInLocal).toFixed(1)} required />
+        <input className="settings__temp settings__temp--out" type="number" step="0.1" name="threshold_input2" min="0" max="60" onChange={tempOutChangeHandler}
+          value={Number.parseFloat(tempOutLocal).toFixed(1)} required />
 
         <p className="settings__row-title">Отклонение температуры</p>
-        <input className="settings__temp-delta" type="number" step="0.1" min="0" max="30" onChange={tempDeltaChangeHandler} value={tempDeltaLocal} required />
+        <input className="settings__temp-delta" type="number" step="0.1" min="0" max="30" onChange={tempDeltaChangeHandler}
+          value={Number.parseFloat(tempDeltaLocal).toFixed(1)} required />
       </section>
 
       <input className="button settings__submit" type="submit" value="СОХРАНИТЬ УСТАНОВКИ"/>
