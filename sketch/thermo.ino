@@ -228,6 +228,7 @@ void setDeviceSettingsHandler(AsyncWebServerRequest *request, uint8_t *data, siz
     bool isSavingSucces = saveSettings(bufferString);
     if(isSavingSucces) {
       responseJson["succes"] = "true";
+      responseJson["data"] = bufferString;
       responseJson["error"] = "";
 
       serializeJson(responseJson, responseMessage);
