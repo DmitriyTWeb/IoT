@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { setDeviceSettings } from "../../store/api-action";
+import { extend } from "../../utils";
 
 const Mode = {
   IN: "IN",
@@ -13,38 +14,24 @@ const TempInit = {
 }
 
 const Settings = ({ setSettings, mode = Mode.IN, tempIn = TempInit.IN, tempOut = TempInit.OUT, tempDelta = TempInit.DELTA }) => {
-  const [modeLocal, setMode] = useState(mode);
-  const [tempInLocal, setTempIn] = useState(tempIn);
-  const [tempOutLocal, setTempOut] = useState(tempOut);
-  const [tempDeltaLocal, setTempDelta] = useState(tempDelta);
+  const [currentSettings, setCurrentSettings] = useState({mode, tempIn, tempOut, tempDelta});
 
   useEffect(() =>{
-    setMode(mode);
-    setTempIn(tempIn);
-    setTempOut(tempOut);
-    setTempDelta(tempDelta);
+    const newState = extend(currentSettings, { mode, tempIn, tempOut, tempDelta });
+    setCurrentSettings(newState);
   }, [mode, tempIn, tempOut, tempDelta]);
 
-  const modeChangeHandler = (e) => {
-    setMode(e.target.value);
-  };
-  const tempInChangeHandler = (e) => {
-    setTempIn(e.target.value);
-  };
-  const tempOutChangeHandler = (e) => {
-    setTempOut(e.target.value);
-  };
-  const tempDeltaChangeHandler = (e) => {
-    setTempDelta(e.target.value);
+  const paramChangeHandler = (e) => {
+    const inputName = e.target.getAttribute('name');
+    const value = e.target.value;
+    const newState = extend(currentSettings, { [inputName]: value });
+    setCurrentSettings(newState);
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
     setSettings({
-      mode: modeLocal,
-      tempIn: tempInLocal,
-      tempOut: tempOutLocal,
-      tempDelta: tempDeltaLocal,
+      ...currentSettings
     });
   };
 
@@ -54,20 +41,19 @@ const Settings = ({ setSettings, mode = Mode.IN, tempIn = TempInit.IN, tempOut =
       <section className="settings__floor">
         <h1 className="settings__floor-title">Установки теплых полов в бане</h1>
         <p className="settings__row-title">Активный режим</p>
-        <input className="settings__mode-switch" type="radio" name="mode" id="mode_in" value={Mode.IN} onChange={modeChangeHandler} checked={modeLocal === Mode.IN} />
+        <input className="settings__mode-switch" type="radio" name="mode" id="mode_in" value={Mode.IN} onChange={paramChangeHandler} checked={currentSettings.mode === Mode.IN} />
         <label className="settings__mode-label" htmlFor="mode_in">хозяин в бане</label>
 
-        <input className="settings__mode-switch" type="radio" name="mode" id="mode_out" value={Mode.OUT} onChange={modeChangeHandler} checked={modeLocal === Mode.OUT} />
+        <input className="settings__mode-switch" type="radio" name="mode" id="mode_out" value={Mode.OUT} onChange={paramChangeHandler} checked={currentSettings.mode === Mode.OUT} />
         <label className="settings__mode-label settings__mode-label--out" htmlFor="mode_out">никого нет</label>
 
         <p className="settings__row-title">Cредняя температура</p>
-        <input className="settings__temp settings__temp--in" type="number" step="0.1" min="0" max="60" onChange={tempInChangeHandler} value={tempInLocal} required />
-        <input className="settings__temp settings__temp--out" type="number" step="0.1" min="0" max="60" onChange={tempOutChangeHandler} value={tempOutLocal} required />
-
+        <input className="settings__temp settings__temp--in" type="number" name="tempIn" step="0.1" min="0" max="60" onChange={paramChangeHandler} value={currentSettings.tempIn} required />
+        <input className="settings__temp settings__temp--out" type="number" name="tempOut" step="0.1" min="0" max="60" onChange={paramChangeHandler} value={currentSettings.tempOut} required />
 
         <p className="settings__row-title">Отклонение температуры</p>
-        <input className="settings__temp-delta" type="number" step="0.1" min="0" max="30" onChange={tempDeltaChangeHandler}
-          value={tempDeltaLocal} required />
+        <input className="settings__temp-delta" name="tempDelta" type="number" step="0.1" min="0" max="30" onChange={paramChangeHandler}
+          value={currentSettings.tempDelta} required />
       </section>
 
       <input className="button settings__submit" type="submit" value="СОХРАНИТЬ УСТАНОВКИ"/>
