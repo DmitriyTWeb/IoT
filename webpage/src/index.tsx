@@ -6,6 +6,7 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createAPI } from './services/api';
 import reducer from './store/reducer';
+import { getDeviceSettings, getDeviceState } from './store/api-action';
 
 import App from './components/app/app';
 
@@ -16,6 +17,9 @@ const store = createStore(
     applyMiddleware(thunk.withExtraArgument(api))
   )
 );
+
+store.dispatch(getDeviceState());
+store.dispatch(getDeviceSettings());
 
 ReactDOM.render(
   <Provider store={store}>

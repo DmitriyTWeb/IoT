@@ -3,12 +3,12 @@ import { connect } from "react-redux"
 import FloorTemp from "../floor-temp/floor-temp";
 import SensorStatus from "../sensor-status/sensor-status";
 import PumpState from "../pump-state/pump-state";
-import { updateDeviceState } from "../../store/action";
+import { getDeviceState } from "../../store/api-action";
 
 const StateBoard = (props) => {
   useEffect(() => {
     setInterval(() => {
-      props.fetchDeviceState();
+      props.loadDeviceState();
     }, 2000);
 
   }, []);
@@ -33,19 +33,8 @@ const mapDispatchToProps = (dispatch) => ({
   changeStore() {
     dispatch(changeStoreState());
   },
-  fetchDeviceState() {
-    fetch('/get_device_state', {
-      method: 'GET',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        dispatch(updateDeviceState(data));
-        console.log('response data = ', data)
-      });
+  loadDeviceState() {
+    dispatch(getDeviceState());
   }
 });
 

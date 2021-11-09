@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import { setDeviceSettings } from "../../store/api-action";
 
 const Mode = {
   IN: "IN",
@@ -10,7 +12,7 @@ const TempInit = {
   DELTA: 3,
 }
 
-const Settings = (props) => {
+const Settings = ({ setSettings }) => {
   const [mode, setMode] = useState(Mode.OUT);
   const [tempIn, setTempIn] = useState(TempInit.IN);
   const [tempOut, setTempOut] = useState(TempInit.OUT);
@@ -31,23 +33,12 @@ const Settings = (props) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-
-    fetch('/set_device_settings', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        "mode": mode,
-        "tempIn": tempIn,
-        "tempOut": tempOut,
-        "tempDelta": tempDelta,
-      })
-    })
-      .then(response => response.json())
-      .then(data => console.log('response data = ', data))
-      .catch(err => console.log(err));
+    setSettings({
+      mode,
+      tempIn,
+      tempOut,
+      tempDelta,
+    });
   };
 
   return(
@@ -75,4 +66,11 @@ const Settings = (props) => {
   );
 };
 
-export default Settings;
+const mapDispatchToProps = (dispatch) => ({
+  setSettings(settings) {
+    dispatch(setDeviceSettings(settings));
+  }
+});
+
+export { Settings };
+export default connect(null, mapDispatchToProps)(Settings);
