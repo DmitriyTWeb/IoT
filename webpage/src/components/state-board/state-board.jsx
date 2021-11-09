@@ -3,22 +3,14 @@ import { connect } from "react-redux"
 import FloorTemp from "../floor-temp/floor-temp";
 import SensorStatus from "../sensor-status/sensor-status";
 import PumpState from "../pump-state/pump-state";
-import { getDeviceState } from "../../store/api-action";
 
-const StateBoard = (props) => {
-  useEffect(() => {
-    setInterval(() => {
-      props.loadDeviceState();
-    }, 2000);
-
-  }, []);
-
+const StateBoard = ({ currentTemp, sensorStatus, pumpState }) => {
   return(
     <section className="state">
       <h1 className="state-title">Состояние системы</h1>
-      <FloorTemp floorTemp={props.currentTemp} />
-      <SensorStatus sensorStatus={props.sensorStatus} />
-      <PumpState pumpState={props.pumpState}/>
+      <FloorTemp floorTemp={currentTemp} />
+      <SensorStatus sensorStatus={sensorStatus} />
+      <PumpState pumpState={pumpState}/>
     </section>
   );
 };
@@ -29,14 +21,5 @@ const mapStateToProps = (state) => ({
   currentTemp: state.currentTemp,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  changeStore() {
-    dispatch(changeStoreState());
-  },
-  loadDeviceState() {
-    dispatch(getDeviceState());
-  }
-});
-
 export {StateBoard};
-export default connect(mapStateToProps, mapDispatchToProps)(StateBoard);
+export default connect(mapStateToProps, null)(StateBoard);

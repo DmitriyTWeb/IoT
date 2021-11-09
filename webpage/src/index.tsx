@@ -10,6 +10,8 @@ import { getDeviceSettings, getDeviceState } from './store/api-action';
 
 import App from './components/app/app';
 
+const STATE_UPDATE_INTERVAL = 2000;
+
 const api = createAPI();
 const store = createStore(
   reducer,
@@ -20,6 +22,10 @@ const store = createStore(
 
 store.dispatch(getDeviceState());
 store.dispatch(getDeviceSettings());
+
+setInterval(() => {
+  store.dispatch(getDeviceState());
+}, STATE_UPDATE_INTERVAL);
 
 ReactDOM.render(
   <Provider store={store}>
