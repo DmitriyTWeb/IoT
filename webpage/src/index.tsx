@@ -27,6 +27,17 @@ setInterval(() => {
   store.dispatch(getDeviceState());
 }, STATE_UPDATE_INTERVAL);
 
+// CORS -request WIP
+// fetch('http://192.168.1.99/get_device_state', {
+//   method: 'GET',
+//   headers: {
+//     'Content-Type': 'application/json'
+//   }
+// })
+//   .then(response => console.log('response = ', response.json()))
+//   .then(data => console.log('data = ', data));
+
+
 ReactDOM.render(
   <Provider store={store}>
     <App />

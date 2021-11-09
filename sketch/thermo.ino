@@ -10,6 +10,8 @@
 const byte TEST_LED_PIN = LED_BUILTIN;
 uint8_t PUMP_PIN = 16;
 
+bool IS_CORS_ALLOWED = false;
+
 String mode;
 float tempIn;
 float tempOut;
@@ -80,11 +82,21 @@ void setupSerial() {
   Serial.println(" bps");
 }
 void setupHttp() {
+  if (IS_CORS_ALLOWED) {
+    allowCORS();
+  }
+
   server.begin();
   Serial.println("HTTP server is started");
   setHttpRequestHandlers();
   Serial.println("HTTP request handlers are configured");
 }
+void allowCORS() {
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Credentials", "true");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+};
 void setupFtpSrv() {
   ftpSrv.begin("admin", "admin");
   Serial.println("FTP server is started");
