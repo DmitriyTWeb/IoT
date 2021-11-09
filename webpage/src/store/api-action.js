@@ -32,7 +32,9 @@ const getDeviceSettings = () => (dispatch, __getState, api) =>
 const setDeviceSettings = (settings) => (dispatch, __getState, api) =>
   api.post(EndPoint.SET_DEVICE_SETTINGS, settings)
     .then(({ data }) => {
-      console.log('setDeviceSettings data = ', data)
+      const newSettings = data.data;
+      dispatch(updateDeviceSettings(newSettings));
+      console.log('setDeviceSettings data = ', data);
     });
 
 // fetch('/set_device_settings', {
