@@ -15,6 +15,7 @@ const TempInit = {
 
 const Settings = ({ setSettings, mode = Mode.IN, tempIn = TempInit.IN, tempOut = TempInit.OUT, tempDelta = TempInit.DELTA }) => {
   const [currentSettings, setCurrentSettings] = useState({mode, tempIn, tempOut, tempDelta});
+  const [edit, setEdit] = useState(false);
 
   useEffect(() =>{
     const newState = extend(currentSettings, { mode, tempIn, tempOut, tempDelta });
@@ -30,33 +31,56 @@ const Settings = ({ setSettings, mode = Mode.IN, tempIn = TempInit.IN, tempOut =
 
   const submitHandler = (e) => {
     e.preventDefault();
-    setSettings({
-      ...currentSettings
-    });
-  };
+
+    if (!edit) {
+      setEdit(true);
+      return;
+    }
+    if (edit) {
+      setSettings({ ...currentSettings });
+      setEdit(false);
+    }
+  }
 
   return(
     <form onSubmit={submitHandler} className="settings">
       <h1 className="settings__title">Настройки системы</h1>
+
       <section className="settings__floor">
+        <div className={`settings__curtain ${!edit && 'settings__curtain--disabled'}`}></div>
         <h1 className="settings__floor-title">Установки теплых полов в бане</h1>
+
         <p className="settings__row-title">Активный режим</p>
-        <input className="settings__mode-switch" type="radio" name="mode" id="mode_in" value={Mode.IN} onChange={paramChangeHandler} checked={currentSettings.mode === Mode.IN} />
+        <input className="settings__mode-switch" type="radio" name="mode"
+          id="mode_in" value={Mode.IN} onChange={paramChangeHandler}
+          checked={currentSettings.mode === Mode.IN}
+          disabled={!edit}
+        />
         <label className="settings__mode-label" htmlFor="mode_in">хозяин в бане</label>
 
-        <input className="settings__mode-switch" type="radio" name="mode" id="mode_out" value={Mode.OUT} onChange={paramChangeHandler} checked={currentSettings.mode === Mode.OUT} />
+        <input className="settings__mode-switch" type="radio" name="mode"
+          id="mode_out" value={Mode.OUT} onChange={paramChangeHandler}
+          checked={currentSettings.mode === Mode.OUT} disabled={!edit} />
         <label className="settings__mode-label settings__mode-label--out" htmlFor="mode_out">никого нет</label>
 
         <p className="settings__row-title">Cредняя температура</p>
-        <input className="settings__temp settings__temp--in" type="number" name="tempIn" step="0.1" min="0" max="60" onChange={paramChangeHandler} value={currentSettings.tempIn} required />
-        <input className="settings__temp settings__temp--out" type="number" name="tempOut" step="0.1" min="0" max="60" onChange={paramChangeHandler} value={currentSettings.tempOut} required />
+        <input className="settings__temp settings__temp--in" type="number"
+          name="tempIn" step="0.1" min="0" max="60"
+          onChange={paramChangeHandler} value={currentSettings.tempIn}
+          disabled={!edit}
+          required />
+        <input className="settings__temp settings__temp--out" type="number"
+        name="tempOut" step="0.1" min="0" max="60" onChange={paramChangeHandler}
+        value={currentSettings.tempOut}
+        disabled={!edit}
+        required />
 
         <p className="settings__row-title">Отклонение температуры</p>
         <input className="settings__temp-delta" name="tempDelta" type="number" step="0.1" min="0" max="30" onChange={paramChangeHandler}
           value={currentSettings.tempDelta} required />
       </section>
 
-      <input className="button settings__submit" type="submit" value="СОХРАНИТЬ УСТАНОВКИ"/>
+      <input className="button settings__submit" type="submit" value={edit ? 'СОХРАНИТЬ УСТАНОВКИ' : 'ИЗМЕНИТЬ УСТАНОВКИ'}/>
     </form>
   );
 };

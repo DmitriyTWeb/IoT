@@ -7,6 +7,7 @@
   border: 1px solid $grey;
   border-radius: 5px;
 }
+
 .settings__title {
   position: absolute;
   background-color: $white;
@@ -27,6 +28,22 @@
   border-radius: 5px;
   padding: 15px;
 }
+
+.settings__curtain {
+  display: none;
+  &--disabled {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #80808038;
+    z-index: 5;
+    border-radius: 5px;
+  }
+}
+
 .settings__floor-title {
   position: absolute;
   background-color: $white;
@@ -36,6 +53,8 @@
   line-height: 14px;
   padding: 0 5px;
   color: grey;
+  border-radius: 3px;
+  z-index: 10;
 }
 
 .settings__row-title {
@@ -72,6 +91,7 @@
 }
 .settings__mode-switch:checked + .settings__mode-label {
   background-color: $bg-color-dark;
+  font-weight: bold;
 }
 
 .settings__temp {
