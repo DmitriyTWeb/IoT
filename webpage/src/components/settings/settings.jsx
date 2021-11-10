@@ -7,13 +7,14 @@ const Mode = {
   IN: "IN",
   OUT: "OUT"
 };
-const TempInit = {
-  IN: 25,
-  OUT: 18,
-  DELTA: 3,
+const Init = {
+  mode: '--',
+  tempIn: -99,
+  tempOut: -99,
+  tempDelta: -99,
 }
 
-const Settings = ({ setSettings, mode = Mode.IN, tempIn = TempInit.IN, tempOut = TempInit.OUT, tempDelta = TempInit.DELTA }) => {
+const Settings = ({ setSettings, mode = Init.mode, tempIn = Init.tempIn, tempOut = Init.tempOut, tempDelta = Init.tempDelta }) => {
   const [currentSettings, setCurrentSettings] = useState({mode, tempIn, tempOut, tempDelta});
   const [edit, setEdit] = useState(false);
 
