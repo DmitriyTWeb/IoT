@@ -24,8 +24,8 @@ const PageMain = () => (
     {/* удалить контейнер вместе с содержимым позже */}
     <div style={testPanelStyle}>
       <Toggler label="Вкл/Вкл встроенного диода" />
-      <GetStateBtn label="Получить состояние" />
-      <GetSettingsBtn label="Получить настройки" />
+      {/* <GetStateBtn label="Получить состояние" />
+      <GetSettingsBtn label="Получить настройки" /> */}
     </div>
   </main>
 );

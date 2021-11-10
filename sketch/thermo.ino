@@ -7,6 +7,9 @@
 
 // --------------------------------------------------------
 // Глобальные константы и переменные
+char *SSID = "FREEDOM";
+const char *PASSWORD = "E7MRZZHZ";
+
 const byte TEST_LED_PIN = LED_BUILTIN;
 uint8_t PUMP_PIN = 16;
 
@@ -102,9 +105,6 @@ void setupFtpSrv() {
   Serial.println("FTP server is started");
 }
 void setupToWiFi() {
-  char *SSID = "FREEDOM";
-  const char *PASSWORD = "E7MRZZHZ";
-
   WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
   {
