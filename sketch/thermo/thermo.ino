@@ -6,6 +6,7 @@
 #include "./libs/wifi.h"
 #include "./libs/eepromlib.h"
 #include "./libs/app-logic.h"
+#include "./libs/fslib.h"
 
 // --------------------------------------------------------
 // Глобальные константы и переменные
@@ -19,12 +20,14 @@ void setup() {
   setupSerial();
   initEEPROM();
 
-  setupInOut();
   setupFtpSrv();
-  setupSPIFFS();
-  setupHttp();
-  setupToWiFi();
-  loadSettings();
+  mountFS();
+
+  setupInOut();
+
+  startHttp();
+  startToWiFi();
+  // loadSettings();
 
   startMillis = millis();
 }
@@ -36,7 +39,6 @@ void loop() {
     controlMainLogic();
     startMillis = currentMillis;
   }
-
 }
 // ========================================================
 void setupInOut() {
@@ -44,21 +46,13 @@ void setupInOut() {
   pinMode(PUMP_PIN, OUTPUT);
   Serial.println("Inputs and Outputs are configured");
 }
-void setupSPIFFS() {
-  SPIFFS.begin();
-  if (!SPIFFS.begin())
-  {
-    Serial.println("An Error has occurred while mounting SPIFFS");
-    return;
-  }
-  Serial.println("SPIFFS is started");
-}
+
 void setupSerial() {
-  const int bitrate = 115200;
-  Serial.begin(bitrate);
+  const int BITRATE = 115200;
+  Serial.begin(BITRATE);
 
   Serial.print("Serial port is open with ");
-  Serial.print(bitrate);
+  Serial.print(BITRATE);
   Serial.println(" bps");
 }
 

@@ -1,14 +1,20 @@
 #pragma once
 
 #include <ESP8266WiFi.h>
+#include "./settings.h"
 
-char *SSID = "FREEDOM";
-const char *PASSWORD = "E7MRZZHZ";
+String SSID;
+String PASSWORD;
 
-void setupToWiFi() {
+void startToWiFi() {
+  writeSSID("FREEDOM");
+  writePASS("E7MRZZHZ");
+
+  SSID = readSSID();
+  PASSWORD = readPASS();
+
   WiFi.begin(SSID, PASSWORD);
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
     Serial.print("WiFi status code: ");

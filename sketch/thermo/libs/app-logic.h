@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./eepromlib.h";
+#include "./settings.h";
 #include "./variables.h"
 
 void setDigitalPin(uint8_t pin, uint8_t newState) {
@@ -76,6 +76,5 @@ void controlMainLogic() {
   setPumpPin(mode, sensorStatus, currentTemp);
 }
 void loadSettings() {
-  // При запуске системы читаем ранее сохраненные настройки
-  readSettingsFromEeprom();
+  readSettings();
 }

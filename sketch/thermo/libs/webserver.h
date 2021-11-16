@@ -1,6 +1,6 @@
 #include "ESPAsyncWebServer.h"
 #include <ArduinoJson.h>
-#include "./eepromlib.h"
+#include "./settings.h"
 #include "./variables.h"
 #include "./app-logic.h"
 
@@ -42,7 +42,7 @@ bool saveSettings(String jsonString) {
   tempDelta = doc["tempDelta"].as<float>();
 
   if (mode && tempIn && tempOut && tempDelta) {
-    writeSettingsToEeprom();
+    writeSettings();
     return true;
   }
 
@@ -164,7 +164,7 @@ void setHttpRequestHandlers() {
   });
 }
 
-void setupHttp() {
+void startHttp() {
   if (IS_CORS_ALLOWED) {
     allowCORS();
   }
