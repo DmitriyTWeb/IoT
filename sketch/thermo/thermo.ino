@@ -26,8 +26,8 @@ void setup() {
   setupInOut();
 
   startHttp();
-  startToWiFi();
-  // loadSettings();
+  startWiFi();
+  loadSettings();
 
   startMillis = millis();
 }

@@ -11,6 +11,14 @@ byte TEMP_IN_ADDR = 4;
 byte TEMP_OUT_ADDR = 8;
 byte TEMP_DELTA_ADDR = 12;
 
+void writeSettings() {
+  EEPROM.put(MODE_ADDR, mode);
+  EEPROM.put(TEMP_IN_ADDR, tempIn);
+  EEPROM.put(TEMP_OUT_ADDR, tempOut);
+  EEPROM.put(TEMP_DELTA_ADDR, tempDelta);
+  EEPROM.commit();
+  Serial.println("Settings were written to EEPROM");
+};
 // ========================================================
 // export part
 // --------------------------------------------------------
@@ -91,11 +99,35 @@ void readSettings() {
   EEPROM.get(TEMP_OUT_ADDR, tempOut);
   EEPROM.get(TEMP_DELTA_ADDR, tempDelta);
 }
-void writeSettings() {
-  EEPROM.put(MODE_ADDR, mode);
-  EEPROM.put(TEMP_IN_ADDR, tempIn);
-  EEPROM.put(TEMP_OUT_ADDR, tempOut);
-  EEPROM.put(TEMP_DELTA_ADDR, tempDelta);
-  EEPROM.commit();
-  Serial.println("Settings were written to EEPROM");
-};
+
+bool saveSettings(String jsonString) {
+  DynamicJsonDocument doc(1024);
+  deserializeJson(doc, jsonString);
+
+  mode = doc["mode"].as<const char*>();
+  tempIn = doc["tempIn"].as<float>();
+  tempOut = doc["tempOut"].as<float>();
+  tempDelta = doc["tempDelta"].as<float>();
+
+  if (mode && tempIn && tempOut && tempDelta) {
+    writeSettings();
+    return true;
+  }
+
+  return false;
+}
+String getDeviceSettings() {
+  String settings;
+  DynamicJsonDocument doc(256);
+
+  doc["tempIn"] = tempIn;
+  doc["tempOut"] = tempOut;
+  doc["tempDelta"] = tempDelta;
+  doc["mode"] = mode;
+
+  if (serializeJson(doc, settings) == 0) {
+    Serial.println(F("Failed to serialize settings"));
+  }
+
+  return settings;
+}

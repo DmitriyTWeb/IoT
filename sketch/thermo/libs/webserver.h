@@ -2,6 +2,7 @@
 #include <ArduinoJson.h>
 #include "./settings.h"
 #include "./variables.h"
+#include "./wifi.h"
 #include "./app-logic.h"
 
 bool IS_CORS_ALLOWED = false;
@@ -32,22 +33,7 @@ String toggleTestLED() {
   return String(state);
 }
 
-bool saveSettings(String jsonString) {
-  DynamicJsonDocument doc(1024);
-  deserializeJson(doc, jsonString);
 
-  mode = doc["mode"].as<const char*>();
-  tempIn = doc["tempIn"].as<float>();
-  tempOut = doc["tempOut"].as<float>();
-  tempDelta = doc["tempDelta"].as<float>();
-
-  if (mode && tempIn && tempOut && tempDelta) {
-    writeSettings();
-    return true;
-  }
-
-  return false;
-}
 String getDeviceState() {
   String state;
   DynamicJsonDocument doc(256);
@@ -62,21 +48,7 @@ String getDeviceState() {
 
   return state;
 }
-String getDeviceSettings() {
-  String settings;
-  DynamicJsonDocument doc(256);
 
-  doc["tempIn"] = tempIn;
-  doc["tempOut"] = tempOut;
-  doc["tempDelta"] = tempDelta;
-  doc["mode"] = mode;
-
-  if (serializeJson(doc, settings) == 0) {
-    Serial.println(F("Failed to serialize settings"));
-  }
-
-  return settings;
-}
 void setDeviceSettingsHandler(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
   String bodyChunk = "";
 
@@ -130,8 +102,14 @@ String getContentType(String filename) {
 bool handleFileRead(AsyncWebServerRequest *request) {
   String path = request->url();
 
-  if (path.endsWith("/"))
-    path += "index.html";
+  if (path.endsWith("/")) {
+    if(wifiMode != "AP") {
+      path += "index.html";
+    } else {
+      path += "settings.html";
+    }
+
+  }
 
   if (SPIFFS.exists(path)) {
     String contentType = getContentType(path);
