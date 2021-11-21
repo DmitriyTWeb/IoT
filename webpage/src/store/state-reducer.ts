@@ -1,5 +1,5 @@
 import { Reducer } from 'redux';
-import { ActionType } from './action';
+import { ActionType } from './actions';
 
 const initialState = {
   currentTemp: '--',
@@ -13,7 +13,7 @@ const extend = (a: Object, b: Object) => ({
   ...b,
 });
 
-const reducer: Reducer = (state = initialState, action) => {
+const stateReducer: Reducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionType.SET_SETTINGS:
       return extend(state, action.payload);
@@ -26,4 +26,4 @@ const reducer: Reducer = (state = initialState, action) => {
   }
 };
 
-export default reducer;
+export default stateReducer;
