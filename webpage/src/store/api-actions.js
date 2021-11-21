@@ -1,4 +1,4 @@
-import { updateDeviceSettings, updateDeviceState } from "./action";
+import { updateDeviceSettings, updateDeviceState } from "./actions";
 
 const EndPoint = {
   GET_DEVICE_STATE: '/get_device_state',
@@ -37,21 +37,5 @@ const setDeviceSettings = (settings) => (dispatch, __getState, api) =>
       console.log('setDeviceSettings data = ', data);
     });
 
-// fetch('/set_device_settings', {
-//   method: 'POST',
-//   mode: 'no-cors',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify({
-//     "mode": mode,
-//     "tempIn": tempIn,
-//     "tempOut": tempOut,
-//     "tempDelta": tempDelta,
-//   })
-// })
-//   .then(response => response.json())
-//   .then(data => console.log('response data = ', data))
-//   .catch(err => console.log(err));
 
 export { getDeviceState, getDeviceSettings, setDeviceSettings };

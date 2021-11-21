@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { updateDeviceState } from "../../store/action";
+import { updateDeviceState } from "../../store/actions";
 
 const GetStateBtn = (props) => {
   return(

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { setDeviceSettings } from "../../store/api-action";
+import { setDeviceSettings } from "../../store/api-actions";
 import { extend } from "../../utils";
 
 const Mode = {
