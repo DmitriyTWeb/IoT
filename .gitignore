@@ -9,3 +9,6 @@ Thumbs.db
 
 # Вспомогательные файлы
 *.log*
+
+# Технические папки
+/sketch/thermo/data/

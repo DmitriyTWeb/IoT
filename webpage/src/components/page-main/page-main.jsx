@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 
 import StateBoard from '../state-board/state-board';
 import Settings from '../settings/settings';
@@ -6,6 +7,7 @@ import Settings from '../settings/settings';
 import Toggler from '../toggler/toggler';
 import GetStateBtn from "../get-state-btn/get-state-btn";
 import GetSettingsBtn from "../get-settings-btn/get-settings-btn";
+import { getPostsFromServer } from '../../store/api-actions';
 
 // удалить позже
 const testPanelStyle = {
@@ -16,18 +18,29 @@ const testPanelStyle = {
   marginBottom: '30px',
 };
 
-const PageMain = () => (
-  <main className="page-main container">
-    <StateBoard />
-    <Settings />
 
-    {/* удалить контейнер вместе с содержимым позже */}
-    <div style={testPanelStyle}>
-      <Toggler label="Вкл/Вкл встроенного диода" />
-      {/* <GetStateBtn label="Получить состояние" />
+
+const PageMain = () => {
+  const dispatch = useDispatch();
+
+  const handleClick = () => {
+    dispatch(getPostsFromServer(10));
+  };
+
+  return(
+    <main className="page-main container">
+      <StateBoard />
+      <Settings />
+
+      {/* удалить контейнер вместе с содержимым позже */}
+      <div style={testPanelStyle}>
+        <Toggler label="Вкл/Вкл встроенного диода" />
+        {/* <GetStateBtn label="Получить состояние" />
       <GetSettingsBtn label="Получить настройки" /> */}
-    </div>
-  </main>
-);
+        <input type="button" onClick={handleClick} value="Get posts" />
+      </div>
+    </main>
+  );
+};
 
 export default PageMain;

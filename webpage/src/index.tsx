@@ -3,25 +3,32 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from "redux-thunk";
+import createSagaMiddleware from 'redux-saga';
+import { rootSaga } from "./store/sagas";
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createAPI } from './services/api';
-import reducer from './store/reducer';
-import { getDeviceSettings, getDeviceState } from './store/api-action';
+import rootReducer from './store/reducers/root-reducer';
+import { getDeviceSettings, getDeviceState } from './store/api-actions';
+// import { getDeviceState } from './api/requests';
 
 import App from './components/app/app';
 
 const STATE_UPDATE_INTERVAL = 2000;
 
+const sagaMiddleware = createSagaMiddleware();
+
 const api = createAPI();
 const store = createStore(
-  reducer,
+  rootReducer,
   composeWithDevTools(
+    applyMiddleware(sagaMiddleware),
     applyMiddleware(thunk.withExtraArgument(api))
   )
 );
 
+sagaMiddleware.run(rootSaga);
 store.dispatch(getDeviceState());
-store.dispatch(getDeviceSettings());
+// store.dispatch(getDeviceSettings());
 
 setInterval(() => {
   store.dispatch(getDeviceState());

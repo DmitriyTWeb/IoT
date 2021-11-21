@@ -1,4 +1,4 @@
-import { ActionType } from './actions';
+import { ApiActionType } from '../api-actions';
 
 const initState = {
   posts: null,
@@ -6,8 +6,8 @@ const initState = {
 
 const sagaReducer = (state = initState, action) => {
   switch (action.type) {
-    case ActionType.USER_POST_FETCH_SUCCEEDED: {
-      const  posts = action.payload.data;
+    case ApiActionType.USER_POST_FETCH_SUCCEEDED: {
+      const  posts = action.payload;
 
       return {
         ...state,

@@ -48,6 +48,8 @@ gulp.task("server", function () {
   gulp.watch("src/*.js", gulp.series("webpack", "refresh"));
   gulp.watch("src/*.tsx", gulp.series("webpack", "refresh"));
   gulp.watch("src/services/*.js", gulp.series("webpack", "refresh"));
+  gulp.watch("src/api/*.js", gulp.series("webpack", "refresh"));
+  gulp.watch("src/store/*.js", gulp.series("webpack", "refresh"));
 });
 
 gulp.task("refresh", function (done) {
