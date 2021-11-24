@@ -28,7 +28,7 @@ const store = createStore(
 
 sagaMiddleware.run(rootSaga);
 store.dispatch(getDeviceState());
-// store.dispatch(getDeviceSettings());
+store.dispatch(getDeviceSettings());
 
 setInterval(() => {
   store.dispatch(getDeviceState());

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { setDeviceSettings } from "../../store/api-actions";
+import { getDeviceSettingsSelect } from "../../store/selectors/selectors";
 import { extend } from "../../utils";
 
 const Mode = {
@@ -14,7 +15,8 @@ const Init = {
   tempDelta: -99,
 }
 
-const Settings = ({ setSettings, mode = Init.mode, tempIn = Init.tempIn, tempOut = Init.tempOut, tempDelta = Init.tempDelta }) => {
+const Settings = ({ setSettings, settings }) => {
+  const { mode = Init.mode, tempIn = Init.tempIn, tempOut = Init.tempOut, tempDelta = Init.tempDelta } = settings;
   const [currentSettings, setCurrentSettings] = useState({mode, tempIn, tempOut, tempDelta});
   const [edit, setEdit] = useState(false);
 
@@ -87,10 +89,7 @@ const Settings = ({ setSettings, mode = Init.mode, tempIn = Init.tempIn, tempOut
 };
 
 const mapStateToProps = (state) => ({
-  mode: state.mode,
-  tempIn: state.tempIn,
-  tempOut: state.tempOut,
-  tempDelta: state.tempDelta
+  settings: getDeviceSettingsSelect(state),
 });
 const mapDispatchToProps = (dispatch) => ({
   setSettings(settings) {

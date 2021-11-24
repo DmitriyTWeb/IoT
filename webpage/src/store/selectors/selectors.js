@@ -4,6 +4,9 @@ import { NameSpace } from "../reducers/root-reducer";
 export const getDeviceStateSelect = (state) => {
   return state[NameSpace.DEV_STATE];
 };
+export const getDeviceSettingsSelect = (state) => {
+  return state[NameSpace.DEV_SETTINGS];
+};
 
 // export const getPromo = (state) => {
 //   return state[NameSpace.DATA].promo;

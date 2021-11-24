@@ -20,18 +20,32 @@ export const getDeviceState = () => {
         'Content-Type': 'application/json',
       }
     })
-    .then(({ data }) => {
-      return data;
-    });
+    .then(({ data }) => data);
 };
-// const getDeviceState = () => (dispatch, __getState, api) =>
-//   api.get(EndPoint.GET_DEVICE_STATE,
+export const getDeviceSettings = () => {
+  return api.get(EndPoint.GET_DEVICE_SETTINGS,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(({ data }) => data);
+};
+// const getDeviceSettings = () => (dispatch, __getState, api) =>
+//   api.get(EndPoint.GET_DEVICE_SETTINGS,
 //     {
 //       headers: {
 //         'Content-Type': 'application/json',
 //       }
 //     })
 //     .then(({ data }) => {
-//       dispatch(updateDeviceState(data));
-//       console.log('updateDeviceState response data = ', data)
+//       dispatch(updateDeviceSettings(data));
+//       console.log('updateDeviceSettings data = ', data)
+//     });
+// const setDeviceSettings = (settings) => (dispatch, __getState, api) =>
+//   api.post(EndPoint.SET_DEVICE_SETTINGS, settings)
+//     .then(({ data }) => {
+//       const newSettings = data.data;
+//       dispatch(updateDeviceSettings(newSettings));
+//       console.log('setDeviceSettings data = ', data);
 //     });

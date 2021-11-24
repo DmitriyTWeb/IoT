@@ -1,8 +1,8 @@
 
 import { ApiActionType } from "./api-actions";
-import { updateDeviceState, updateError } from "./actions";
+import { updateDeviceState, updateDeviceSettings, updateError } from "./actions";
 import { call, put, takeEvery, all } from "redux-saga/effects";
-import { getDeviceState, getUserPosts } from "../api/requests";
+import { getDeviceState, getDeviceSettings, getUserPosts } from "../api/requests";
 
 
 const workerGetPosts = function* (action) {
@@ -28,6 +28,14 @@ const workerGetDeviceState = function* (action) {
     yield put(updateError(error));
   }
 };
+const workerGetDeviceSettings = function* (action) {
+  try {
+    const deviceSettings = yield call(getDeviceSettings, action.payload);
+    yield put(updateDeviceSettings(deviceSettings));
+  } catch (error) {
+    yield put(updateError(error));
+  }
+};
 // -----------------
 const watchGetPosts = function* () {
   yield takeEvery(ApiActionType.USER_POST_FETCH_REQUESTED, workerGetPosts);
@@ -35,11 +43,15 @@ const watchGetPosts = function* () {
 const watchGetDeviceState = function* () {
   yield takeEvery(ApiActionType.GET_DEVICE_STATE, workerGetDeviceState);
 };
+const watchGetDeviceSettings = function* () {
+  yield takeEvery(ApiActionType.GET_DEVICE_SETTINGS, workerGetDeviceSettings);
+};
 // -----------------
 
 export function* rootSaga() {
   yield all([
     watchGetDeviceState(),
+    watchGetDeviceSettings(),
     watchGetPosts()
   ]);
 };
