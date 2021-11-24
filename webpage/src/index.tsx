@@ -34,6 +34,7 @@ setInterval(() => {
   store.dispatch(getDeviceState());
 }, STATE_UPDATE_INTERVAL);
 
+// Заготовка под CORS запросы
 // CORS -request WIP
 // fetch('http://192.168.1.99/get_device_state', {
 //   method: 'GET',

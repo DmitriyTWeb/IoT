@@ -14,7 +14,6 @@ interface deviceState {
   pumpState: string,
   sensorStatus: string,
 }
-
 interface deviceSettings {
   mode: string,
   tempIn: string,
@@ -22,10 +21,6 @@ interface deviceSettings {
   tempDelta: string,
 }
 
-export const setSetting = (settings: object): actionObj => ({
-  type: ActionType.SET_SETTINGS,
-  payload: settings,
-});
 export const updateDeviceState = (state: deviceState): actionObj => ({
   type: ActionType.UPDATE_DEVICE_STATE,
   payload: state
