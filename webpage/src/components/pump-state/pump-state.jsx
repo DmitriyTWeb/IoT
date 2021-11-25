@@ -17,4 +17,4 @@ const PumpState = ({pumpState}) => {
   );
 };
 
-export default PumpState;
+export default React.memo(PumpState);

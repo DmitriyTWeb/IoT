@@ -18,4 +18,4 @@ const SensorStatus = ({sensorStatus}) => {
   );
 };
 
-export default SensorStatus;
+export default React.memo(SensorStatus);

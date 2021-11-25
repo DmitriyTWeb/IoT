@@ -12,4 +12,4 @@ const FloorTemp = ({ floorTemp}) => {
   );
 };
 
-export default FloorTemp;
+export default React.memo(FloorTemp);

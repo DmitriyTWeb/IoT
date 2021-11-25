@@ -12,7 +12,7 @@
 // Глобальные константы и переменные
 unsigned long startMillis;
 unsigned long currentMillis;
-const unsigned long PERIOD = 5000;
+const unsigned long PERIOD = 500;
 // --------------------------------------------------------
 FtpServer ftpSrv;
 
