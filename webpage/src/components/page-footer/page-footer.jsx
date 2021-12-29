@@ -2,7 +2,7 @@ import React from 'react';
 
 const PageFooter = (props) => (
   <footer className="page-footer">
-    <div className="container">
+    <div className="my-0 mx-auto sm:px-4 md:px-8 w-11/12">
       <div className="page-footer__wrapper">
         <a className="page-footer__logo" href="/">
           Powered by SmartHome

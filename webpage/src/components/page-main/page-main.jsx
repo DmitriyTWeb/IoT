@@ -5,8 +5,8 @@ import StateBoard from '../state-board/state-board';
 import Settings from '../settings/settings';
 
 import Toggler from '../toggler/toggler';
-import GetStateBtn from "../get-state-btn/get-state-btn";
-import GetSettingsBtn from "../get-settings-btn/get-settings-btn";
+// import GetStateBtn from "../get-state-btn/get-state-btn";
+// import GetSettingsBtn from "../get-settings-btn/get-settings-btn";
 import { getPostsFromServer } from '../../store/api-actions';
 
 // удалить позже
@@ -28,7 +28,7 @@ const PageMain = () => {
   };
 
   return(
-    <main className="page-main container">
+    <main className="page-main my-0 mx-auto sm:px-4 md:px-8 w-11/12">
       <StateBoard />
       <Settings />
 
