@@ -9,7 +9,7 @@ import { DeviceState } from "../../store/reducers/state-reducer";
 const StateBoard = ({ DeviceStatee }: {DeviceStatee: DeviceState}) => {
   const { currentTemp, sensorStatus, pumpState } = DeviceStatee;
   return(
-    <section className="state">
+    <section className="relative grid grid-cols-[2fr_1fr] mt-20 xl:mt-30 state">
       <h1 className="state-title">Состояние системы</h1>
       <FloorTemp floorTemp={currentTemp} />
       <SensorStatus sensorStatus={sensorStatus} />
