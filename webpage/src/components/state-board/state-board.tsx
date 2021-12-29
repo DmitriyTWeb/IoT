@@ -4,9 +4,10 @@ import FloorTemp from "../floor-temp/floor-temp";
 import SensorStatus from "../sensor-status/sensor-status";
 import PumpState from "../pump-state/pump-state";
 import { getDeviceStateSelect } from "../../store/selectors/selectors";
+import { DeviceState } from "../../store/reducers/state-reducer";
 
-const StateBoard = ({ deviceState }) => {
-  const { currentTemp, sensorStatus, pumpState } = deviceState;
+const StateBoard = ({ DeviceStatee }: {DeviceStatee: DeviceState}) => {
+  const { currentTemp, sensorStatus, pumpState } = DeviceStatee;
   return(
     <section className="state">
       <h1 className="state-title">Состояние системы</h1>
@@ -17,8 +18,8 @@ const StateBoard = ({ deviceState }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  deviceState: getDeviceStateSelect(state),
+const mapStateToProps = (state: DeviceState) => ({
+  DeviceStatee: getDeviceStateSelect(state),
 });
 
 export {StateBoard};
