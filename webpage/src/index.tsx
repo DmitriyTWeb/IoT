@@ -27,12 +27,12 @@ const store = createStore(
 );
 
 sagaMiddleware.run(rootSaga);
-store.dispatch(getDeviceState());
-store.dispatch(getDeviceSettings());
+// store.dispatch(getDeviceState());
+// store.dispatch(getDeviceSettings());
 
-setInterval(() => {
-  store.dispatch(getDeviceState());
-}, STATE_UPDATE_INTERVAL);
+// setInterval(() => {
+//   store.dispatch(getDeviceState());
+// }, STATE_UPDATE_INTERVAL);
 
 // Заготовка под CORS запросы
 // CORS -request WIP
