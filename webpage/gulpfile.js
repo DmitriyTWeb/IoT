@@ -12,6 +12,7 @@ const del = require('del');
 const webpack = require('webpack-stream');
 const path = require('path');
 const webpackConfig = require('./webpack.config.js');
+const tailwindcss = require('tailwindcss');
 
 const webpackConfigProd = Object.assign({}, webpackConfig, { mode: 'production' });
 
@@ -42,8 +43,9 @@ gulp.task("server", function () {
   });
 
   gulp.watch("src/sass/**/*.{scss,sass}", gulp.series("css"));
+  gulp.watch("src/*.{css}", gulp.series("twcss"));
   gulp.watch("src/*.html", gulp.series("copyHtml", "copyImg", "refresh"));
-  gulp.watch("src/components/**/*.{tsx,jsx}", gulp.series("webpack", "refresh"));
+  gulp.watch("src/components/**/*.{tsx,jsx}", gulp.series("twcss", "webpack", "refresh"));
   gulp.watch("src/hooks/*.js", gulp.series("webpack", "refresh"));
   gulp.watch("src/*.js", gulp.series("webpack", "refresh"));
   gulp.watch("src/*.tsx", gulp.series("webpack", "refresh"));
@@ -70,6 +72,17 @@ gulp.task("css", function () {
     .pipe(gulp.dest("build/"))
     .pipe(server.stream());
 });
+
+gulp.task('twcss', function () {
+  return gulp.src('src/tailwind.css')
+    .pipe(postcss([
+      tailwindcss('./tailwind.config.js'),
+      autoprefixer(),
+    ]))
+    .pipe(rename("tw.css"))
+    .pipe(gulp.dest('build/'))
+    .pipe(server.stream());
+})
 
 gulp.task("copyHtml", function () {
   return gulp.src([
@@ -106,6 +119,6 @@ gulp.task("clean", function () {
 
 gulp.task("compressImage", gulp.series("images"));
 
-gulp.task("buildProduction", gulp.series("clean", "copyHtml", "copyImg","css", "webpackProduction"));
-gulp.task("build", gulp.series("clean", "copyHtml", "copyImg", "css", "webpack"));
+gulp.task("buildProduction", gulp.series("clean", "copyHtml", "copyImg","css", "twcss", "webpackProduction"));
+gulp.task("build", gulp.series("clean", "copyHtml", "copyImg", "css", "twcss", "webpack"));
 gulp.task("start", gulp.series("build", "webpack", "server"));
