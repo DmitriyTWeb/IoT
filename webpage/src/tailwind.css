@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input[type=radio]:checked + label {
+  @apply bg-blue-200;
+  @apply font-bold;
+}
