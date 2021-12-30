@@ -37,7 +37,7 @@ const PageMain = () => {
         <Toggler label="Вкл/Вкл встроенного диода" />
         {/* <GetStateBtn label="Получить состояние" />
       <GetSettingsBtn label="Получить настройки" /> */}
-        <input type="button" onClick={handleClick} value="Get posts" />
+        <input type="button"className="border p-2 bg-gray-200" onClick={handleClick} value="Get posts" />
       </div>
     </main>
   );

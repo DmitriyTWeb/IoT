@@ -7,7 +7,7 @@ const Toggler = (props) => {
   };
 
   return(
-    <input type="button" value={props.label} onClick={clickHandler}/>
+    <input type="button" className="border p-2 bg-gray-200 mb-2" value={props.label} onClick={clickHandler}/>
   );
 };
 
