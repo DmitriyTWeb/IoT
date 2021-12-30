@@ -1,7 +1,7 @@
 import { Reducer } from 'redux';
 import { ActionType } from '../actions';
 
-export interface DeviceState {
+export interface DeviceStateProps {
   currentTemp: string,
   sensorStatus: string,
   pumpState: string
@@ -19,7 +19,7 @@ const extend = (a: Object, b: Object) => ({
   ...b,
 });
 
-const stateReducer: Reducer = (state:DeviceState = initialState, action) => {
+const stateReducer: Reducer = (state:DeviceStateProps = initialState, action) => {
   switch (action.type) {
     case ActionType.UPDATE_DEVICE_STATE:
       return extend(state, action.payload);
