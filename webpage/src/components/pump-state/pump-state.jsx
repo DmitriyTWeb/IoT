@@ -8,10 +8,10 @@ const PumpState = ({pumpState}) => {
     label = 'В РАБОТЕ';
   }
 
-  const classList = `pump-state__value ${pumpState ? 'pump-state__value--on' : ''}`;
+  const classList = `bg-gray-200 text-center px-4 py-2.5 rounded-md ${pumpState ? 'bg-green-300' : ''}`;
   return(
     <>
-      <p className="pump-state__title">Статус включения насоса</p>
+      <p className="flex items-center mr-4 md:mr-5">Статус включения насоса</p>
       <p className={classList}>{label}</p>
     </>
   );

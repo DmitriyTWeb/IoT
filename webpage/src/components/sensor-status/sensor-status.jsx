@@ -8,10 +8,10 @@ const SensorStatus = ({sensorStatus}) => {
     label = 'В НОРМЕ';
   }
 
-  const classList = `sensor-status__value ${sensorStatus === 'SENSOR_BROKEN' ? "sensor-status__value--broken" : ""}`;
+  const classList = `bg-gray-200 text-center px-4 py-2.5 rounded-md ${sensorStatus === 'SENSOR_BROKEN' ? "bg-red-400" : ""}`;
   return(
     <>
-      <p className="sensor-status__title">Статус датчика</p>
+      <p className="flex items-center mr-4 md:mr-5">Статус датчика</p>
       <p className={classList}>{label}</p>
     </>
 
